@@ -7,7 +7,7 @@ const options:swaggerJSDoc.Options = {
         version: '0.0.1', // Version (required)
       },
     },
-    apis:['./src/**/index.ts','index.js']
+    apis:['./src/**/app.ts','index.js']
   };
 
 export const swaggerSpec = swaggerJSDoc(options)
