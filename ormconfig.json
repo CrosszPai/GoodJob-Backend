@@ -1,0 +1,10 @@
+{
+    "type":"",
+    "host":"",
+    "port": 0,
+    "database":"goodjob",
+    "synchromize":true,
+    "logging":true,
+    "entities":["src/entities/**/*.ts"]
+
+}
