@@ -13,3 +13,6 @@
 ## Production Start script
 
 `npm run start:prod` or `yarn start:prod`
+
+## Testing 
+`npm run test` or `yarn test`
