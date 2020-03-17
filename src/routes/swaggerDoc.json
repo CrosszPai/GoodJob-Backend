@@ -1,0 +1,65 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "GoodJob API",
+    "description": "API document for GoodJob Project",
+    "version": "0.0.1"
+  },
+  "servers": [
+      {
+          "url":"https://goodjob-api.herokuapp.com/",
+          "description":"Public API Server"
+      },
+      {
+          "url": "http://localhost:8000",
+          "description": "Local Server for backend development"
+      }
+  ],
+  "components": {
+    "schemas": {
+      "Payload": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "integer"
+          },
+          "Text": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payload"
+              }
+            }
+          },
+          "description": "Object will be tested"
+        },
+        "responses": {
+          "200": {
+            "description": "Get response same at request object"
+          }
+        }
+      },
+      "get": {
+        "description": "Testing swagger",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

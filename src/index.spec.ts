@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from './app'
+import app from './routes'
 
 describe('Test root path',()=>{
   test('it should response get method',async ()=>{
