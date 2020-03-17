@@ -7,12 +7,15 @@
     "start:dev": "nodemon",
     "build": "rimraf ./build && tsc",
     "start": "node build/index.js",
-    "start:prod": "npm run build && node build/index.js"
+    "start:prod": "npm run build && node build/index.js",
+    "test": "jest"
   },
   "dependencies": {
+    "@types/jest": "^25.1.4",
     "express": "^4.17.1",
     "nodemon": "^2.0.2",
     "reflect-metadata": "^0.1.13",
+    "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",
     "typeorm": "^0.2.24",
     "typescript": "^3.8.3"
@@ -20,6 +23,9 @@
   "devDependencies": {
     "@types/express": "^4.17.3",
     "@types/node": "^13.9.1",
-    "rimraf": "^3.0.2"
+    "@types/supertest": "^2.0.8",
+    "jest": "^25.1.0",
+    "rimraf": "^3.0.2",
+    "supertest": "^4.0.2"
   }
 }
