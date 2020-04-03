@@ -1,7 +1,15 @@
-import app from './routes'
+import app from './routes/index'
+import initORM from './utils/db'
+require('dotenv').config()
 
 const PORT = process.env.PORT || 8000
 
-app.listen(PORT, () => {
-    console.log(`Listing on port ${PORT}`);
-})
+initORM()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Listing on port ${PORT}`);
+        })
+    })
+    .catch(err => console.log(err)
+    )
+
