@@ -25,6 +25,9 @@ app.post('/', (req, res) => {
     res.status(200)
         .json(req.body)
 })
+app.get('/login', (req, res) => {
+    res.send("login")
+})
 
 
 export default app
