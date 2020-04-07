@@ -6,7 +6,6 @@ import swaggerDoc from './swaggerDoc.json'
 
 const app = express()
 
-
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve)
