@@ -1,17 +1,12 @@
-import { createConnection } from "typeorm"
+import mongoose from 'mongoose'
 
-const initORM = async () => {
-    let connection = await createConnection(
-        {
-            type: 'postgres',
-            url: process.env.url,
-            entities: [`${process.env.NODE_ENV === 'production' ? 'build' : 'src'}/entity/**/*.*.js`],
-            synchronize: true,
-            logging: false
-        }
-    )
-    console.log(connection);
-
+export const initMongoose = async () => {
+    try {
+        await mongoose.connect('mongodb+srv://admin:crosszpai13@cluster0-gpf70.mongodb.net/GoodJob?retryWrites=true&w=majority', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+    } catch (err) {
+        console.error(err)
+    }
 }
-
-export default initORM
