@@ -1,15 +1,17 @@
 import app from './routes/index'
-import initORM from './utils/db'
+import {initMongoose} from './utils/db'
+import mongoose from 'mongoose'
+
 require('dotenv').config()
 
 const PORT = process.env.PORT || 8000
 
-initORM()
-    .then(() => {
+initMongoose()
+    .then(async () => {
         app.listen(PORT, () => {
             console.log(`Listing on port ${PORT}`);
         })
     })
-    .catch(err => console.log(err)
-    )
+
+
 
