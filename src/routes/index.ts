@@ -8,6 +8,7 @@ import { JobController } from "../controller/job.controller";
 import {CommentController} from "../controller/comment.controller";
 
 const app = express()
+
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve)
@@ -15,10 +16,9 @@ app.use('/api-docs', swaggerUi.serve)
 app.get('/api-docs', swaggerUi.setup(swaggerDoc))
 
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
     res.send("Hello World")
 })
-
 
 app.get('/', (req, res) => {
     res.send(add('Hello ', 'World'))
@@ -29,8 +29,11 @@ app.post('/', (req, res) => {
         .json(req.body)
 })
 
-app.post('/w/:id',CommentController.postComment)
-app.post('/w/:id/comment/:comment',CommentController.replyComment)
-app.get('/r/:id',CommentController.getComments)
+var auth = require('./auth');
+var user = require('./user');
+
+app.use("/auth",auth);
+app.use("/user",user);
+
 
 export default app
