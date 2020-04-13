@@ -19,13 +19,7 @@ router.get("/getUser",(req,res) => {
   });
 
 });
-router.get("/getUID",(req,res) => {
-  let token =  req.headers.authorization;
-    verify(token).then(uid => {
-      //console.log("UID = ", uid);
-      res.send({userID: uid});
-    });
-});
+
 
 module.exports = router;
 
