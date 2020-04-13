@@ -35,42 +35,46 @@ router.get("/createNewUser",(req,res) => {
 });
 router.post("/updatePhotoURL",(req,res) => {
     console.log(req.body.photoURL)
-    res.send(200)
+    res.send("200")
 });
 router.post("/updateFirstname",(req,res) => {
-    console.log(req.body.firstname)
+    console.log('Firstname = ',req.body)
     res.send(200)
 });
 router.post("/updateLastname",(req,res) => {
-    console.log(req.body.lastname)
+    console.log('Lastname = ',req.body)
     res.send(200)
 });
 router.post("/updateGender",(req,res) => {
-    console.log(req.body.gender)
+    console.log('Gender = ',req.body)
     res.send(200)
 });
 router.post("/updateCurrentRole",(req,res) => {
-    console.log(req.body.current_role)
+    console.log('CurrentRole = ',req.body)
     res.send(200)
 });
 router.post("/updateCurrentProvince",(req,res) => {
-    console.log(req.body.current_province)
+    console.log('CurrentProvince = ',req.body)
     res.send(200)
 });
 router.post("/updateInterested",(req,res) => {
-    console.log(req.body.interested)
+    console.log('Interested = ',req.body)
     res.send(200)
 });
 router.post("/updateIntroduce",(req,res) => {
-    console.log(req.body.introduce_text)
+    console.log('Introduce = ',req.body)
     res.send(200)
 });
 router.post("/updatePhoneNumber",(req,res) => {
-    console.log(req.body.phone_number)
+    console.log('PhoneNumber = ',req.body)
     res.send(200)
 });
 router.post("/updateID_card",(req,res) => {
-    console.log(req.body.id_card)
+    console.log('ID_card = ',req.body)
+    res.send(200)
+});
+router.post("/updateAge",(req,res) => {
+    console.log('age = ',req.body)
     res.send(200)
 });
 
