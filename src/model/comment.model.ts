@@ -20,7 +20,6 @@ export const CommentModel = mongoose.model('comment', CommentSchema)
 
 export const createComment = async (
     jobId: string,
-    email: string,
     content: string
 ) => {
     const job = await JobModel.findOne({
@@ -31,6 +30,8 @@ export const createComment = async (
         content: content,
         job: job._id
     });
+    job['comments'].push(comment)
+    await job.save()
     return await comment.save()
 };
 
@@ -51,7 +52,7 @@ export const updateComment = async (
 
 
 export const getAllComment = async (jobId:string)=>{
-    return CommentModel.find({
+    return await CommentModel.find({
         job: jobId
     });
 }
