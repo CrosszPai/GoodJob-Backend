@@ -9,5 +9,6 @@ export interface User {
     phone_number?: string,
     id_card?: string,
     email:string,
-    age:number
+    age:number,
+    photoURL:string
 }

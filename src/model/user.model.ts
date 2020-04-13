@@ -1,5 +1,5 @@
 import mongoose, { Model } from 'mongoose'
-import { User } from "../interface/user.interfaec";
+import { User } from "../interface/user.interface";
 import { JobModel } from './job.model';
 
 export const UserSchema = new mongoose.Schema({
