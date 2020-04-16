@@ -3,16 +3,18 @@ import { add } from "../utils/add";
 import swaggerUi from 'swagger-ui-express'
 
 import swaggerDoc from './swaggerDoc.json'
-import { UserController } from "../controller/user.controller";
-import { JobController } from "../controller/job.controller";
-import {CommentController} from "../controller/comment.controller";
+
+import cors from 'cors';
+import JobRoute from "./job";
+import AuthRoute from './auth'
+import UserRoute from './user'
 
 const app = express()
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(cors())
 app.use('/api-docs', swaggerUi.serve)
-
 app.get('/api-docs', swaggerUi.setup(swaggerDoc))
 
 
@@ -20,20 +22,8 @@ app.get('/', (req, res) => {
     res.send("Hello World")
 })
 
-app.get('/', (req, res) => {
-    res.send(add('Hello ', 'World'))
-})
-
-app.post('/', (req, res) => {
-    res.status(200)
-        .json(req.body)
-})
-
-var auth = require('./auth');
-var user = require('./user');
-
-app.use("/auth",auth);
-app.use("/user",user);
-
+app.use("/auth", AuthRoute);
+app.use("/user", UserRoute);
+app.use("/job", JobRoute)
 
 export default app

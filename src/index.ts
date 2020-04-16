@@ -1,6 +1,5 @@
 import app from './routes/index'
 import {initMongoose} from './utils/db'
-import mongoose from 'mongoose'
 
 const PORT = process.env.PORT || 8000
 
@@ -9,6 +8,10 @@ initMongoose()
         app.listen(PORT, () => {
             console.log(`Listing on port ${PORT}`);
         })
+    })
+    .catch(err=>{
+        console.log(err);
+        process.exit(1)
     })
 
 

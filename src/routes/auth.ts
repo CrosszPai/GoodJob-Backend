@@ -1,25 +1,8 @@
-var express = require('express');
-var router = express.Router();
+import express from 'express'
+import { UserController } from '../controller/user.controller'
 
-import verify  from "../utils/verify";
-import admin from '../adminFirebase'
+const AuthRoute = express.Router()
 
-router.get("/getUser",(req,res) => {
-  verify(req.headers.idtoken).then(uid => {
+AuthRoute.get('/login', UserController.login)
 
-    admin.auth().getUser(uid)
-    .then(function(userRecord) {
-      console.log('Successfully fetched user data:', userRecord.toJSON());
-      res.json(userRecord.toJSON());
-    })
-    .catch(function(error) {
-      console.log('Error fetching user data:', error);
-    });
-    
-  });
-
-});
-
-
-module.exports = router;
-
+export default AuthRoute

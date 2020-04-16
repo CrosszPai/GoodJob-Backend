@@ -1,5 +1,6 @@
-import mongoose from 'mongoose'
-import {User} from "../interface/user.interfaec";
+import mongoose, { Model } from 'mongoose'
+import { User } from "../interface/user.interface";
+import { JobModel } from './job.model';
 
 export const UserSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -10,11 +11,12 @@ export const UserSchema = new mongoose.Schema({
     current_province: String,
     interested: [String],
     introduce_text: String,
-    age:Number,
+    age: Number,
     phone_number: String,
     id_card: String,
     email: String,
-    photoUrl:String,
+    photoURL: String,
+    uid: String,
     selectedBy: [{
         type: mongoose.Types.ObjectId,
         ref: 'selected'
@@ -23,18 +25,19 @@ export const UserSchema = new mongoose.Schema({
 
 export const UserModel = mongoose.model('user', UserSchema);
 
-
-export const createUser = async (email: string): Promise<mongoose.Document> => {
+export const createUser = async (info: { uid: string, email: string, photoURL: string }): Promise<mongoose.Document> => {
     let user = new UserModel({
         _id: new mongoose.Types.ObjectId(),
-        email: email
+        email: info.email,
+        photoURL: info.photoURL,
+        uid: info.uid
     });
     return await user.save()
 };
 
-export const updateUser = async (email: string, info: User): Promise<mongoose.Document> => {
+export const updateUser = async (uid: string, info: User): Promise<mongoose.Document> => {
     let user = await UserModel.findOne({
-        email,
+        uid
     });
     for (const key in info) {
         if (info.hasOwnProperty(key)) {
@@ -44,3 +47,59 @@ export const updateUser = async (email: string, info: User): Promise<mongoose.Do
     return await user.save()
 
 };
+
+export const getAllUser = async () => {
+    return await UserModel.find()
+        .populate({
+            path: 'selectedBy',
+            populate: {
+                path: 'job',
+            }
+        })
+}
+
+export const getUserById = async (uid: string): Promise<mongoose.Document> => {
+    let user = await UserModel.findOne(
+        { uid }
+    );
+    return user
+}
+
+export const getAvailableUser = async (jobID: string, condition: object) => {
+    let job = await JobModel.findOne({
+        _id: jobID
+    })
+    let users = await UserModel.find(
+        {
+            $or: [
+                ...job['tags'].map((v: string) => ({ interested: v })),
+            ],
+        }
+    ).populate({
+        path: 'selectedBy',
+        populate:{
+            path:'job'
+        }
+    })
+    console.log(users,'\n');
+    
+    let a = users.filter((v) => {
+        // check not busy
+        console.log(v['selectedBy'].length);
+        
+        for (let index = 0; index < v['selectedBy'].length; index++) {
+            if (v['selectedBy'][index]['job'].start_date <= job['finish_date'] && v['selectedBy'][index]['job'].finish_date >= job['start_date']) {
+                return false
+            }
+        }
+        return true
+    })
+    // console.log(users);
+    
+    return a
+}
+
+
+export const sendInvitetoUser = async (users: mongoose.Document[]) => {
+    let w = await UserModel.updateMany({}, users)
+}

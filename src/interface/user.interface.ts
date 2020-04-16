@@ -8,6 +8,7 @@ export interface User {
     introduce_text?: string,
     phone_number?: string,
     id_card?: string,
-    email:string,
-    age:number
+    email?:string,
+    age?:number,
+    photoURL?:string
 }
