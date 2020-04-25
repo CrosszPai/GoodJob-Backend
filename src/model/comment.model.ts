@@ -52,7 +52,7 @@ export const updateComment = async (
 
 
 export const getAllComment = async (jobId:string)=>{
-    return await CommentModel.find({
+    return CommentModel.find({
         job: jobId
     });
 }

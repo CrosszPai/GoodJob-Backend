@@ -10,27 +10,45 @@ export const SelectedSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'user'
     },
-    status: String
+    status: String,
+    position: String
 });
 
 export const SelectedModel = mongoose.model('selected', SelectedSchema);
 
-export const addSelected = async (jobId: string, userId: string, status: string) => {
+export const addSelected = async (jobId: string, userId: string, status: string, position: string) => {
     let selected = new SelectedModel({
         _id: new mongoose.Types.ObjectId(),
         job: new mongoose.Types.ObjectId(jobId),
         user: new mongoose.Types.ObjectId(userId),
-        status
-    })
+        status,
+        position
+    });
     return await selected.save()
-}
+};
 
 export const updateSelected = async (jobId: string, userId: string, status: string) => {
-    let target = await SelectedModel.findOneAndUpdate({
+    return  SelectedModel.findOneAndUpdate({
         jobId,
         userId
     }, {
         status
+    });
+};
+
+export const getSelectedUser = async (jobId: string) => {
+    return SelectedModel.find({
+        job: jobId
     })
-    return target
-}
+        .populate('user');
+};
+
+export const removeSelected = async (id: string) => {
+    return SelectedModel.deleteOne({
+        $or: [{
+            _id: id
+        }, {
+            user: id
+        }]
+    });
+};

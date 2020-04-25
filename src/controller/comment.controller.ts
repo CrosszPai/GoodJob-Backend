@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
-import { createComment, getAllComment, updateComment } from "../model/comment.model";
+import {Request, Response} from "express";
+import {createComment, getAllComment, updateComment} from "../model/comment.model";
 
 export class CommentController {
     static async postComment(req: Request, res: Response) {
         let jobId = req.params['id'];
-        let { content } = req.body;
+        let {content} = req.body;
         if (!jobId) {
             console.log(jobId);
-            
+
             return res.status(401)
                 .send('bad request')
         }
@@ -17,14 +17,14 @@ export class CommentController {
 
     static async replyComment(req: Request, res: Response) {
         let commentID = req.params['comment'];
-        let { reply } = req.body
+        let {reply} = req.body;
         if (!reply) {
             return res.status(401)
                 .send('Bad request')
         }
         let u = await updateComment(commentID, {
             reply: reply
-        })
+        });
         res.json(u)
     }
 
@@ -34,7 +34,7 @@ export class CommentController {
             return res.status(401)
                 .send('Bad request')
         }
-        let posts = await getAllComment(jobId)
+        let posts = await getAllComment(jobId);
         res.json(posts)
     }
 }
