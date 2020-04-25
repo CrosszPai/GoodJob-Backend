@@ -8,3 +8,5 @@ UserRoute.put('/',UserController.editUserProfile)
 UserRoute.get('/a',UserController.getAllUserwithInfo)
 
 export default UserRoute
+
+
