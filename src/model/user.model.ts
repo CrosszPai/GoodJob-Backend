@@ -1,6 +1,6 @@
-import mongoose, { Model } from 'mongoose'
-import { User } from "../interface/user.interface";
-import { JobModel } from './job.model';
+import mongoose from 'mongoose'
+import {User} from "../interface/user.interface";
+import {JobModel} from './job.model';
 
 export const UserSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -49,44 +49,44 @@ export const updateUser = async (uid: string, info: User): Promise<mongoose.Docu
 };
 
 export const getAllUser = async () => {
-    return await UserModel.find()
+    return UserModel.find()
         .populate({
             path: 'selectedBy',
             populate: {
                 path: 'job',
             }
-        })
-}
+        });
+};
 
 export const getUserById = async (uid: string): Promise<mongoose.Document> => {
-    let user = await UserModel.findOne(
-        { uid }
+    return UserModel.findOne(
+        {uid}
     );
-    return user
-}
+};
 
 export const getAvailableUser = async (jobID: string, condition: object) => {
     let job = await JobModel.findOne({
         _id: jobID
-    })
+    });
     let users = await UserModel.find(
         {
             $or: [
-                ...job['tags'].map((v: string) => ({ interested: v })),
+                ...job['tags'].map((v: string) => ({interested: v})),
             ],
         }
     ).populate({
         path: 'selectedBy',
-        populate:{
-            path:'job'
+        populate: {
+            path: 'job'
         }
-    })
-    console.log(users,'\n');
-    
-    let a = users.filter((v) => {
+    });
+    console.log(users, '\n');
+
+    // console.log(users);
+    return users.filter((v) => {
         // check not busy
         console.log(v['selectedBy'].length);
-        
+
         for (let index = 0; index < v['selectedBy'].length; index++) {
             if (v['selectedBy'][index]['job'].start_date <= job['finish_date'] && v['selectedBy'][index]['job'].finish_date >= job['start_date']) {
                 return false
@@ -94,12 +94,9 @@ export const getAvailableUser = async (jobID: string, condition: object) => {
         }
         return true
     })
-    // console.log(users);
-    
-    return a
-}
+};
 
 
 export const sendInvitetoUser = async (users: mongoose.Document[]) => {
     let w = await UserModel.updateMany({}, users)
-}
+};

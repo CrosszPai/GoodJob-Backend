@@ -1,3 +1,5 @@
+import { Position } from "./position.interface";
+
 export interface Job {
     title: string,
     description: string,
@@ -5,7 +7,5 @@ export interface Job {
     finish_date: Date,
     location: number[],
     mode: 'auto' | 'manual',
-    position: string[],
-    posWage: number[],
-    posReq: number[],
+    positions: Array<Position>
 }
