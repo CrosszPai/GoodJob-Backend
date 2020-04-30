@@ -8,3 +8,4 @@ const shuffle = <T>(a: Array<T>): Array<T> => {
     }
     return a;
 }
+export default shuffle

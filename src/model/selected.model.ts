@@ -11,7 +11,10 @@ export const SelectedSchema = new mongoose.Schema({
         ref: 'user'
     },
     status: String,
-    position: String
+    position: {
+        type: mongoose.Types.ObjectId,
+        ref: 'position'
+    }
 });
 
 export const SelectedModel = mongoose.model('selected', SelectedSchema);
@@ -28,7 +31,7 @@ export const addSelected = async (jobId: string, userId: string, status: string,
 };
 
 export const updateSelected = async (jobId: string, userId: string, status: string) => {
-    return  SelectedModel.findOneAndUpdate({
+    return SelectedModel.findOneAndUpdate({
         jobId,
         userId
     }, {
@@ -52,3 +55,28 @@ export const removeSelected = async (id: string) => {
         }]
     });
 };
+
+export const geUserFinished = async (id: string) => {
+    return SelectedModel.find(
+        {
+            status: 'finished'
+        }
+    )
+}
+
+export const getUserPositionInfo = async (userId: string, jobId: string) => {
+    return SelectedModel.find({})
+        .populate({
+            path: 'job',
+            match: {
+                _id: jobId
+            }
+        })
+        .populate({
+            path: 'user',
+            match: {
+                _id: userId
+            }
+        })
+        .populate('position')
+}
