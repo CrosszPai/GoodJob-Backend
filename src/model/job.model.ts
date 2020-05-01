@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { Job } from "../interface/job.interface";
 import { getAvailableUserForJob, UserModel } from "./user.model";
-import { addSelected, SelectedModel } from './selected.model';
+import { addSelected } from './selected.model';
 import { createNewPosition, PositionModel } from './position.model';
 import checkArrayEmpty from "../utils/isArrayEmpty";
 import shuffle from '../utils/shuffleArray'
@@ -12,6 +12,7 @@ export const JobSchema = new mongoose.Schema({
     description: String,
     start_date: Number,
     finish_date: Number,
+    location: Object,
     positions: [{
         type: mongoose.Types.ObjectId,
         ref: 'position'
@@ -24,7 +25,15 @@ export const JobSchema = new mongoose.Schema({
     comments: [{
         type: mongoose.Types.ObjectId,
         ref: 'comment'
-    }]
+    }],
+    created: {
+        type: Date,
+        default: Date.now()
+    },
+    updated: {
+        type: Date,
+        default: Date.now()
+    }
 });
 export const JobModel = mongoose.model('job', JobSchema);
 
@@ -62,6 +71,8 @@ export const createJob = async (email: string, { description, finish_date, locat
                     continue
                 }
                 let w = await addSelected(job._id, current_user._id, 'inviting', name);
+                w['wating'] = Date.now()
+                await w.save()
                 current_user['selectedBy'] = [...current_user['selectedBy'], w._id];
                 await current_user.save()
                 index++
@@ -85,15 +96,8 @@ export const updateJob = async (id: string, info: Job): Promise<mongoose.Documen
 
         }
     }
+    job['updated'] = Date.now()
     return await job.save()
-};
-
-export const sendInvite = async (userIds: string[]) => {
-    let u = await SelectedModel.updateMany({
-        _id: {
-            $in: userIds
-        }
-    }, { status: 'inviting' })
 };
 
 export const getAvailableJobForUser = async () => {

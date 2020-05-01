@@ -4,9 +4,10 @@ import admin from "firebase-admin";
 import { Job } from "../interface/job.interface";
 import isArrayEmpty from '../utils/isArrayEmpty'
 import verify from "../utils/verify";
-import { createJob, JobModel, updateJob, getAvailableJobForUser } from "../model/job.model";
-import { addSelected, getSelectedUser, updateSelected } from "../model/selected.model";
-import { getAvailableUserForJob, getUserById } from "../model/user.model";
+import { createJob, getAvailableJobForUser, JobModel, updateJob } from "../model/job.model";
+import { addSelected, getSelectedUser, SelectedModel, updateSelected } from "../model/selected.model";
+import { getUserById } from "../model/user.model";
+import { checkIfOwner } from "../utils/checkIsOwner";
 
 export class JobController {
     static async postJob(req: Request, res: Response) {
@@ -39,7 +40,7 @@ export class JobController {
 
 
     static async editJob(req: Request, res: Response) {
-        let { info } = req.body;
+        let info = req.body;
         if (!info) {
             return res.status(401)
                 .send('Bad request')
@@ -50,11 +51,17 @@ export class JobController {
                 .send('Bad request')
         }
 
-        let job = await updateJob(id, info);
-        res.json(job)
+        try {
+            let job = await updateJob(id, info);
+            return res.json(job)
+        } catch (error) {
+            return res.status(401)
+                .send(error)
+        }
+
     }
 
-    static async acceptJob(req: Request, res: Response) {
+    static async acceptJobByUser(req: Request, res: Response) {
         let jobId = req.params['id'];
         let token = req.headers.idtoken;
         try {
@@ -96,9 +103,15 @@ export class JobController {
             return res.status(401)
                 .send('invalid token')
         }
+
         try {
-            await verify(token);
-            await updateSelected(jobId, info.userId, 'inviting')
+            let uid = await verify(token);
+            if (!(await checkIfOwner(uid, jobId)))
+                return res.status(404)
+                    .send('error')
+            let w = await updateSelected(jobId, info.userId, 'inviting')
+            w['waiting'] = Date.now()
+            res.send('invite success')
         } catch (error) {
             res.status(401)
                 .send(error)
@@ -143,6 +156,7 @@ export class JobController {
                 .send(error)
         }
     }
+
     static async getAvailableJob(req: Request, res: Response) {
         let token = req.headers.idtoken;
         if (typeof (token) !== "string") {
@@ -153,6 +167,49 @@ export class JobController {
             await verify(token);
             let jobs = await getAvailableJobForUser()
             return res.json(jobs)
+        } catch (error) {
+            res.status(401)
+                .send(error)
+        }
+    }
+
+    static async confirmSuccessJob(req: Request, res: Response) {
+        let token = req.headers.idtoken
+        let jobId = req.params.id
+        let user = req.params.user
+        if (typeof (token) !== "string") {
+            return res.status(401)
+                .send('invalid token')
+        }
+        try {
+            await verify(token);
+            let jobs = await SelectedModel.find({})
+                .populate('job')
+                .populate('user')
+            let target = jobs.filter(v => v['user']._id === user && v['job'].id === jobId).pop()
+            target['status'] = 'finished'
+            await target.save()
+            return res.send('success')
+        } catch (error) {
+            res.status(401)
+                .send(error)
+        }
+    }
+
+    static async getJobInfo(req: Request, res: Response) {
+        let token = req.headers.idtoken
+        let jobId = req.params.id
+        if (typeof (token) !== "string") {
+            return res.status(401)
+                .send('invalid token')
+        }
+        try {
+            await verify(token);
+            let job = await JobModel.findById(jobId)
+                .populate('positions')
+                .populate('owner')
+                .populate('comments')
+            return res.json(job)
         } catch (error) {
             res.status(401)
                 .send(error)

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
-import {User} from "../interface/user.interface";
-import {JobModel} from './job.model';
+import { User } from "../interface/user.interface";
+import { JobModel } from './job.model';
 
 export const UserSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -60,16 +60,13 @@ export const getAllUser = async () => {
 
 export const getUserById = async (id: string): Promise<mongoose.Document> => {
     return UserModel.findOne(
-        {
-            $or: [
-                {
-                    _id: new mongoose.Types.ObjectId(id)
-                },
-                {
-                    uid: id
-                }
-            ]
-        }
+        id.length === 24 ?
+            {
+                _id: new mongoose.Types.ObjectId(id)
+            } :
+            {
+                uid: id
+            }
     );
 };
 
@@ -80,7 +77,7 @@ export const getAvailableUserForJob = async (jobID: string, condition: object) =
     let users = await UserModel.find(
         {
             $or: [
-                ...job['tags'].map((v: string) => ({interested: v})),
+                ...job['tags'].map((v: string) => ({ interested: v })),
             ],
         }
     ).populate({

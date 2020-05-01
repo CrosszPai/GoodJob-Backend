@@ -13,7 +13,15 @@ export const CommentSchema = new mongoose.Schema({
         ref: 'user'
     },
     content: String,
-    reply: String
+    reply: String,
+    created: {
+        type: Date,
+        default: Date.now()
+    },
+    updated: {
+        type: Date,
+        default: Date.now()
+    }
 });
 export const CommentModel = mongoose.model('comment', CommentSchema)
 
@@ -47,11 +55,12 @@ export const updateComment = async (
             comment[key] = info[key]
         }
     }
+    comment['updated'] = Date.now()
     return await comment.save()
 };
 
 
-export const getAllComment = async (jobId:string)=>{
+export const getAllComment = async (jobId: string) => {
     return CommentModel.find({
         job: jobId
     });

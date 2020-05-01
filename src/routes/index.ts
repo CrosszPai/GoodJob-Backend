@@ -19,7 +19,7 @@ app.get('/api-docs', swaggerUi.setup(swaggerDoc))
 
 
 app.get('/', (req, res) => {
-    res.send("Hello World")
+    return  res.send("Hello World")
 })
 
 app.use("/auth", AuthRoute);
