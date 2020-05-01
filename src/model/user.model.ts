@@ -58,15 +58,24 @@ export const getAllUser = async () => {
         });
 };
 
-export const getUserById = async (uid: string): Promise<mongoose.Document> => {
+export const getUserById = async (id: string): Promise<mongoose.Document> => {
     return UserModel.findOne(
-        {uid}
+        {
+            $or: [
+                {
+                    _id: new mongoose.Types.ObjectId(id)
+                },
+                {
+                    uid: id
+                }
+            ]
+        }
     );
 };
 
-export const getAvailableUser = async (jobID: string, condition: object) => {
+export const getAvailableUserForJob = async (jobID: string, condition: object) => {
     let job = await JobModel.findOne({
-        _id: jobID
+        _id: new mongoose.Types.ObjectId(jobID)
     });
     let users = await UserModel.find(
         {
@@ -94,9 +103,4 @@ export const getAvailableUser = async (jobID: string, condition: object) => {
         }
         return true
     })
-};
-
-
-export const sendInvitetoUser = async (users: mongoose.Document[]) => {
-    let w = await UserModel.updateMany({}, users)
 };

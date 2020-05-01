@@ -5,7 +5,11 @@ export interface Job {
     description: string,
     start_date: Date,
     finish_date: Date,
-    location: number[],
+    location: {
+        lat:number,
+        lon:number,
+        text:string
+    }
     mode: 'auto' | 'manual',
     positions: Array<Position>
 }

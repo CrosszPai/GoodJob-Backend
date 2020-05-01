@@ -1,8 +1,10 @@
 import mongoose from 'mongoose'
-import {Job} from "../interface/job.interface";
-import {getAvailableUser, UserModel} from "./user.model";
-import {addSelected, SelectedModel} from './selected.model';
-import {createNewPosition} from './position.model';
+import { Job } from "../interface/job.interface";
+import { getAvailableUserForJob, UserModel } from "./user.model";
+import { addSelected, SelectedModel } from './selected.model';
+import { createNewPosition, PositionModel } from './position.model';
+import checkArrayEmpty from "../utils/isArrayEmpty";
+import shuffle from '../utils/shuffleArray'
 
 export const JobSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -26,7 +28,7 @@ export const JobSchema = new mongoose.Schema({
 });
 export const JobModel = mongoose.model('job', JobSchema);
 
-export const createJob = async (email: string, {description, finish_date, location, mode, positions, start_date, title}: Job): Promise<mongoose.Document> => {
+export const createJob = async (email: string, { description, finish_date, location, mode, positions, start_date, title }: Job): Promise<mongoose.Document> => {
     let user = await UserModel.findOne({
         email
     });
@@ -39,36 +41,40 @@ export const createJob = async (email: string, {description, finish_date, locati
         location,
         owner: user._id
     });
-    const createdPositionList = positions.map(async (position) => {
-        return await createNewPosition(job._id, {...position})
-    });
-    job['positions'].push(createdPositionList);
+    job['positions'] = await Promise.all(await positions.map(async (position) => {
+        return await createNewPosition(job._id, { ...position })
+    }))
     const l = await job.save();
     if (mode === 'auto') {
-        const users = await getAvailableUser(job._id, {});
-        for (const {name, required, wage} of positions) {
-            for (let index = 0; index < required; index++) {
+        let users = await getAvailableUserForJob(job._id, {});
+        users = shuffle(users)
+        const store: mongoose.Document[] = []
+        for (const { name, required, } of positions) {
+            users = [...users, ...store]
+            if (checkArrayEmpty(users))
+                break
+            for (let index = 0; index < required;) {
+                if (checkArrayEmpty(users))
+                    break
                 let current_user = shuffle(users).pop();
-                
+                if (!current_user['interested'].includes(name)) {
+                    store.push(current_user)
+                    continue
+                }
                 let w = await addSelected(job._id, current_user._id, 'inviting', name);
                 current_user['selectedBy'] = [...current_user['selectedBy'], w._id];
                 await current_user.save()
+                index++
             }
         }
     } else if (mode === 'manual') {
-        let users = await getAvailableUser(job._id, {});
+        let users = await getAvailableUserForJob(job._id, {});
         for (const doc of shuffle(users)) {
-            let w = await addSelected(job._id, doc._id, 'selecting', undefined)
+            await addSelected(job._id, doc._id, 'selecting', undefined)
         }
     }
     return l
 };
-
-export const ajob = async (jobId: string) => {
-    let job = await JobModel.findById(jobId);
-    return await getAvailableUser(job._id, {})
-};
-
 export const updateJob = async (id: string, info: Job): Promise<mongoose.Document> => {
     let job = await JobModel.findOne({
         _id: id
@@ -87,13 +93,12 @@ export const sendInvite = async (userIds: string[]) => {
         _id: {
             $in: userIds
         }
-    }, {status: 'inviting'})
+    }, { status: 'inviting' })
 };
 
-export const testComment = async () => {
-    let a = await JobModel.find()
-        .populate({
-            path: 'comments',
-        });
-    return a
-};
+export const getAvailableJobForUser = async () => {
+    let userJob = await PositionModel.find({})
+        .populate('job')
+        .populate('apply')
+    return userJob.filter(v => v['required'] > v['apply'].lenght)
+}
