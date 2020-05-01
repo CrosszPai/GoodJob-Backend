@@ -1,13 +1,13 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import admin from "firebase-admin";
 
-import {Job} from "../interface/job.interface";
+import { Job } from "../interface/job.interface";
 import isArrayEmpty from '../utils/isArrayEmpty'
 import verify from "../utils/verify";
-import {createJob, getAvailableJobForUser, JobModel, updateJob} from "../model/job.model";
-import {addSelected, getSelectedUser, SelectedModel, updateSelected} from "../model/selected.model";
-import {getUserById} from "../model/user.model";
-import {checkIfOwner} from "../utils/checkIsOwner";
+import { createJob, getAvailableJobForUser, JobModel, updateJob } from "../model/job.model";
+import { addSelected, getSelectedUser, SelectedModel, updateSelected } from "../model/selected.model";
+import { getUserById } from "../model/user.model";
+import { checkIfOwner } from "../utils/checkIsOwner";
 
 export class JobController {
     static async postJob(req: Request, res: Response) {
@@ -40,7 +40,7 @@ export class JobController {
 
 
     static async editJob(req: Request, res: Response) {
-        let {info} = req.body;
+        let info = req.body;
         if (!info) {
             return res.status(401)
                 .send('Bad request')
@@ -51,8 +51,14 @@ export class JobController {
                 .send('Bad request')
         }
 
-        let job = await updateJob(id, info);
-        res.json(job)
+        try {
+            let job = await updateJob(id, info);
+            return res.json(job)
+        } catch (error) {
+            return res.status(401)
+                .send(error)
+        }
+
     }
 
     static async acceptJobByUser(req: Request, res: Response) {
@@ -92,7 +98,7 @@ export class JobController {
     static async selectUserForJob(req: Request, res: Response) {
         let token = req.headers.idtoken;
         let jobId = req.params['id']
-        let {info} = req.body
+        let { info } = req.body
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token')
@@ -135,7 +141,7 @@ export class JobController {
     static async userApplyJob(req: Request, res: Response) {
         let token = req.headers.idtoken;
         let jobID = req.params.id
-        let {info} = req.body
+        let { info } = req.body
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token')

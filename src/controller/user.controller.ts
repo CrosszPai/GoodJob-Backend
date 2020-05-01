@@ -10,7 +10,7 @@ export class UserController {
 
         try {
             if (typeof (token) !== "string") {
-                throw new Error("invalid token type")
+                return res.status(401).send("invalid token type")
             }
             let uid = await verify(token);
             let result = await getUserById(uid)
@@ -26,6 +26,8 @@ export class UserController {
                 return res.json(result)
             }
         } catch (err) {
+            console.log(err);
+            
             return res.status(401)
                 .send(err)
         }
