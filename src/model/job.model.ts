@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
-import { Job } from "../interface/job.interface";
-import { getAvailableUserForJob, UserModel } from "./user.model";
-import { addSelected, SelectedModel } from './selected.model';
-import { createNewPosition, PositionModel } from './position.model';
+import {Job} from "../interface/job.interface";
+import {getAvailableUserForJob, UserModel} from "./user.model";
+import {addSelected} from './selected.model';
+import {createNewPosition, PositionModel} from './position.model';
 import checkArrayEmpty from "../utils/isArrayEmpty";
 import shuffle from '../utils/shuffleArray'
 
@@ -12,6 +12,7 @@ export const JobSchema = new mongoose.Schema({
     description: String,
     start_date: Number,
     finish_date: Number,
+    location: Object,
     positions: [{
         type: mongoose.Types.ObjectId,
         ref: 'position'
@@ -24,11 +25,19 @@ export const JobSchema = new mongoose.Schema({
     comments: [{
         type: mongoose.Types.ObjectId,
         ref: 'comment'
-    }]
+    }],
+    created: {
+        type: Date,
+        default: Date.now()
+    },
+    updated: {
+        type: Date,
+        default: Date.now()
+    }
 });
 export const JobModel = mongoose.model('job', JobSchema);
 
-export const createJob = async (email: string, { description, finish_date, location, mode, positions, start_date, title }: Job): Promise<mongoose.Document> => {
+export const createJob = async (email: string, {description, finish_date, location, mode, positions, start_date, title}: Job): Promise<mongoose.Document> => {
     let user = await UserModel.findOne({
         email
     });
@@ -42,14 +51,14 @@ export const createJob = async (email: string, { description, finish_date, locat
         owner: user._id
     });
     job['positions'] = await Promise.all(await positions.map(async (position) => {
-        return await createNewPosition(job._id, { ...position })
+        return await createNewPosition(job._id, {...position})
     }))
     const l = await job.save();
     if (mode === 'auto') {
         let users = await getAvailableUserForJob(job._id, {});
         users = shuffle(users)
         const store: mongoose.Document[] = []
-        for (const { name, required, } of positions) {
+        for (const {name, required,} of positions) {
             users = [...users, ...store]
             if (checkArrayEmpty(users))
                 break
@@ -85,15 +94,8 @@ export const updateJob = async (id: string, info: Job): Promise<mongoose.Documen
 
         }
     }
+    job['updated'] = Date.now()
     return await job.save()
-};
-
-export const sendInvite = async (userIds: string[]) => {
-    let u = await SelectedModel.updateMany({
-        _id: {
-            $in: userIds
-        }
-    }, { status: 'inviting' })
 };
 
 export const getAvailableJobForUser = async () => {

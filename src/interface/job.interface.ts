@@ -8,7 +8,7 @@ export interface Job {
     location: {
         lat:number,
         lon:number,
-        text:string
+        address:string
     }
     mode: 'auto' | 'manual',
     positions: Array<Position>
