@@ -114,6 +114,87 @@
     }
   },
   "paths": {
+    "/job/{id}/accept": {
+      "put": {
+        "description": "user ตอบรับ invite",
+        "parameters": [{
+          "in": "path",
+          "required": true,
+          "name": "id"
+        }],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/comment": {
+      "put": {
+        "description": "reply comment",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reply": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "post comment",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/all": {
       "get": {
         "description": "ดึงข้อมูล user ทั้งหมด",
@@ -127,7 +208,7 @@
     },
     "/job/{id}": {
       "get": {
-        "description": "ดึงข้อมูล job",
+        "description": "ดึงข้อมูล job ตาม id",
         "parameters": [
           {
             "in": "path",
@@ -145,7 +226,7 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "แก้ไข job ตาม id",
         "parameters": [
           {
             "in": "path",
