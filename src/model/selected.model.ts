@@ -14,7 +14,12 @@ export const SelectedSchema = new mongoose.Schema({
     position: {
         type: mongoose.Types.ObjectId,
         ref: 'position'
-    }
+    },
+    created: {
+        type: Date,
+        default: Date.now()
+    },
+    waiting: Date
 });
 
 export const SelectedModel = mongoose.model('selected', SelectedSchema);
@@ -56,27 +61,35 @@ export const removeSelected = async (id: string) => {
     });
 };
 
-export const geUserFinished = async (id: string) => {
-    return SelectedModel.find(
+export const removeExpireInvite = async () => {
+    let d = new Date()
+    d.setDate(d.getDate() - 2)
+    SelectedModel.updateMany({
+        status: 'inviting',
+        waiting: {
+            $lt: d.getTime(),
+        }
+    }, {
+        status: 'cancel'
+    })
+}
+
+export const getUserSelectedByStatus = async (userId: string, status: string) => {
+    let select = await SelectedModel.find(
         {
-            status: 'finished'
+            status
         }
     )
+        .populate('user')
+        .populate('job')
+    return select.filter(v => v['user']._id === userId)
 }
 
 export const getUserPositionInfo = async (userId: string, jobId: string) => {
-    return SelectedModel.find({})
-        .populate({
-            path: 'job',
-            match: {
-                _id: jobId
-            }
-        })
-        .populate({
-            path: 'user',
-            match: {
-                _id: userId
-            }
-        })
+    let pos = await SelectedModel.find({})
+        .populate('job')
+        .populate('user')
         .populate('position')
+    return pos.filter(v => v['job']._id === jobId && v['user']._id === userId)
+        .pop()
 }

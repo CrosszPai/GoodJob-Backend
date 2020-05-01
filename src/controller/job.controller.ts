@@ -55,7 +55,7 @@ export class JobController {
         res.json(job)
     }
 
-    static async acceptJob(req: Request, res: Response) {
+    static async acceptJobByUser(req: Request, res: Response) {
         let jobId = req.params['id'];
         let token = req.headers.idtoken;
         try {
@@ -103,7 +103,8 @@ export class JobController {
             if (!(await checkIfOwner(uid, jobId)))
                 return res.status(404)
                     .send('error')
-            await updateSelected(jobId, info.userId, 'inviting')
+            let w = await updateSelected(jobId, info.userId, 'inviting')
+            w['waiting'] = Date.now()
             res.send('invite success')
         } catch (error) {
             res.status(401)
@@ -202,8 +203,6 @@ export class JobController {
                 .populate('positions')
                 .populate('owner')
                 .populate('comments')
-                .populate('created')
-                .populate('updated')
             return res.json(job)
         } catch (error) {
             res.status(401)
