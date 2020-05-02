@@ -60,13 +60,9 @@ export const createJob = async (email: string, { description, finish_date, locat
     let newjob = await JobModel.findOne({
         _id: job._id
     })
-    let tobeadd = await Promise.all(positions.map(async (position) => {
+    await Promise.all(positions.map(async (position) => {
         return await createNewPosition(job._id, { ...position })
     }))
-    console.log(tobeadd);
-    for (let index = 0; index < tobeadd.length; index++) {
-        newjob['positions'].push(tobeadd[index])
-    }
     let l = await newjob.save()
     if (mode === 'auto') {
         let users = await getAvailableUserForJob(job._id, {});
