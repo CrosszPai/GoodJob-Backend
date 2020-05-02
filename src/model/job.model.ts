@@ -53,7 +53,7 @@ export const createJob = async (email: string, { description, finish_date, locat
     console.log(job);
     job = await job.save()
     console.log(job);
-    job['positions'] = await Promise.all(await positions.map(async (position) => {
+    job['positions'] = await Promise.all(positions.map(async (position) => {
         return await createNewPosition(job._id, { ...position })
     }))
     const l = await job.save();
