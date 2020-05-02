@@ -13,7 +13,7 @@ export const JobSchema = new mongoose.Schema({
     start_date: Date,
     finish_date: Date,
     location: Object,
-    mode:String,
+    mode: String,
     positions: [{
         type: mongoose.Types.ObjectId,
         ref: 'position'
@@ -38,7 +38,7 @@ export const JobSchema = new mongoose.Schema({
 });
 export const JobModel = mongoose.model('job', JobSchema);
 
-export const createJob = async (email: string, { description, finish_date, location, mode, positions, start_date, title }: Job): Promise<mongoose.Document> => {
+export const createJob = async (email: string, { description, finish_date, location, mode, positions, start_date, title, tags }: Job): Promise<mongoose.Document> => {
     let user = await UserModel.findOne({
         email
     });
@@ -50,17 +50,18 @@ export const createJob = async (email: string, { description, finish_date, locat
         description,
         location,
         owner: user._id,
-        positions:[],
-        mode
+        positions: [],
+        mode,
+        tags
     });
     console.log(job?.['positions']?.lenght);
-    
-    
+
+
     await job.save();
     let newjob = await JobModel.findOne({
-        _id:job._id
+        _id: job._id
     })
-    let tobeadd =  await Promise.all(positions.map(async (position) => {
+    let tobeadd = await Promise.all(positions.map(async (position) => {
         return await createNewPosition(job._id, { ...position })
     }))
     for (let index = 0; index < tobeadd.length; index++) {

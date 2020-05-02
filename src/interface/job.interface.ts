@@ -11,5 +11,6 @@ export interface Job {
         address:string
     }
     mode: 'auto' | 'manual',
-    positions: Array<Position>
+    positions: Array<Position>,
+    tags:Array<string>
 }
