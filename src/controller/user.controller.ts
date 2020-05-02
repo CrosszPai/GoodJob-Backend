@@ -17,7 +17,7 @@ export class UserController {
             if (!result) {
                 const userRecord = await admin.auth().getUser(uid);
                 let t = await createUser({
-                    email: userRecord.email,
+                    email: userRecord.email || userRecord.providerData[0].email,
                     photoURL: userRecord.photoURL,
                     uid: userRecord.uid
                 });
