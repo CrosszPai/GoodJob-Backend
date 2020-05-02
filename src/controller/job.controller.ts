@@ -178,13 +178,14 @@ export class JobController {
         let token = req.headers.idtoken
         let job = req.params.id
         let user = req.params.user
-        let userid = new Types.ObjectId(user)
-        let jobId = new Types.ObjectId(job)
+
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token')
         }
         try {
+            let userid = new Types.ObjectId(user)
+            let jobId = new Types.ObjectId(job)
             await verify(token);
             let jobs = await SelectedModel.find({})
                 .populate('job')
@@ -211,7 +212,12 @@ export class JobController {
             let job = await JobModel.findById(jobId)
                 .populate('positions')
                 .populate('owner')
-                .populate('comments')
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'posterId'
+                    }
+                })
             return res.json(job)
         } catch (error) {
             res.status(401)
