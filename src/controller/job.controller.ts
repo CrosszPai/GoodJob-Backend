@@ -130,9 +130,9 @@ export class JobController {
         }
         try {
             let uid = await verify(token);
-            let jobs = await JobModel.find({
-                mode
-            })
+            let jobs = await JobModel.find(
+                mode ? { mode } : {}
+            )
                 .populate('owner')
                 .populate({
                     path: 'positions',
