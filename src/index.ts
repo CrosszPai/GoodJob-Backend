@@ -7,7 +7,7 @@ let interval = null
 initMongoose()
     .then(async () => {
         app.listen(PORT, () => {
-            console.log(`Listing on port ${PORT}`);
+            console.log(`Listing on port ${PORT} mode:${process.env.NODE_ENV}`);
         })
         interval = setInterval(async()=>{
             await removeExpireInvite()
