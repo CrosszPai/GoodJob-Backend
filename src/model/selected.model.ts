@@ -1,4 +1,4 @@
-import mongoose, { Types } from 'mongoose'
+import mongoose, {Types} from 'mongoose'
 
 export const SelectedSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -49,6 +49,15 @@ export const getSelectedUser = async (jobId: string) => {
     })
         .populate('user');
 };
+
+export const getSelectingUser = async (jobId: string) => {
+    return SelectedModel.find({
+        job: jobId,
+        status: 'selecting'
+    })
+        .populate('user');
+};
+
 
 export const removeSelected = async (id: string) => {
     return SelectedModel.deleteOne({

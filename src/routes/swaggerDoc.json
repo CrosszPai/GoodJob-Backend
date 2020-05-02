@@ -114,6 +114,27 @@
     }
   },
   "paths": {
+    "/job/{id}/selecting": {
+      "get": {
+        "description": "ดึง list ของ user ที่จะให้เลือก",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "required": true,
+            "schema":{
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/user/job/{id}": {
       "get": {
         "description": "ดึงข้อมูล user จาก job",
