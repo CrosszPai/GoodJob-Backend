@@ -134,6 +134,15 @@ export class JobController {
                 mode
             })
                 .populate('owner')
+                .populate({
+                    path: 'positions',
+                    populate: {
+                        path: 'apply',
+                        match: {
+                            status: 'accept'
+                        }
+                    }
+                })
             return res.send(jobs.filter(v => v['owner'].uid === uid))
         } catch (error) {
             res.status(401)
