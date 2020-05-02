@@ -13,6 +13,7 @@ export const JobSchema = new mongoose.Schema({
     start_date: Date,
     finish_date: Date,
     location: Object,
+    mode:String,
     positions: [{
         type: mongoose.Types.ObjectId,
         ref: 'position'
@@ -49,7 +50,8 @@ export const createJob = async (email: string, { description, finish_date, locat
         description,
         location,
         owner: user._id,
-        positions:[]
+        positions:[],
+        mode
     });
     console.log(job?.['positions']?.lenght);
     
