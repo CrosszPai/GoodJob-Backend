@@ -8,6 +8,7 @@ import { createJob, getAvailableJobForUser, JobModel, updateJob } from "../model
 import { addSelected, getSelectedUser, SelectedModel, updateSelected } from "../model/selected.model";
 import { getUserById } from "../model/user.model";
 import { checkIfOwner } from "../utils/checkIsOwner";
+import { Types } from "mongoose";
 
 export class JobController {
     static async postJob(req: Request, res: Response) {
@@ -17,7 +18,7 @@ export class JobController {
                 return res.status(401)
                     .send("invalid token type")
             }
-            let info: Job = req.body.info;
+            let info: Job = req.body;
             if (isArrayEmpty(info.positions)) {
                 return res.status(401)
                     .send('Empty array of info')
@@ -98,7 +99,7 @@ export class JobController {
     static async selectUserForJob(req: Request, res: Response) {
         let token = req.headers.idtoken;
         let jobId = req.params['id']
-        let { info } = req.body
+        let info = req.body
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token')
@@ -141,7 +142,7 @@ export class JobController {
     static async userApplyJob(req: Request, res: Response) {
         let token = req.headers.idtoken;
         let jobID = req.params.id
-        let { info } = req.body
+        let info = req.body
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token')
@@ -175,8 +176,10 @@ export class JobController {
 
     static async confirmSuccessJob(req: Request, res: Response) {
         let token = req.headers.idtoken
-        let jobId = req.params.id
+        let job = req.params.id
         let user = req.params.user
+        let userid = new Types.ObjectId(user)
+        let jobId = new Types.ObjectId(job)
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token')
@@ -186,7 +189,7 @@ export class JobController {
             let jobs = await SelectedModel.find({})
                 .populate('job')
                 .populate('user')
-            let target = jobs.filter(v => v['user']._id === user && v['job'].id === jobId).pop()
+            let target = jobs.filter(v => userid.equals(v['user']._id) && jobId.equals(v['job'].id)).pop()
             target['status'] = 'finished'
             await target.save()
             return res.send('success')

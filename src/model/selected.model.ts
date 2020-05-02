@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 
 export const SelectedSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -36,12 +36,14 @@ export const addSelected = async (jobId: string, userId: string, status: string,
 };
 
 export const updateSelected = async (jobId: string, userId: string, status: string) => {
-    return SelectedModel.findOneAndUpdate({
-        jobId,
-        userId
-    }, {
-        status
-    });
+    let jobOid = new mongoose.Types.ObjectId(jobId)
+    let userOid = new mongoose.Types.ObjectId(userId)
+    let selects = await SelectedModel.find({})
+        .populate('user')
+        .populate('job')
+    let target = selects.filter(v => userOid.equals(v['user']._id) && jobOid.equals(v['job']._id)).pop()
+    target['status'] = status
+    return target.save()
 };
 
 export const getSelectedUser = async (jobId: string) => {
@@ -75,6 +77,7 @@ export const removeExpireInvite = async () => {
 }
 
 export const getUserSelectedByStatus = async (userId: string, status: string) => {
+    let userOid = new Types.ObjectId(userId)
     let select = await SelectedModel.find(
         {
             status
@@ -82,14 +85,16 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     )
         .populate('user')
         .populate('job')
-    return select.filter(v => v['user']._id === userId)
+    return select.filter(v => userOid.equals(v['user']._id))
 }
 
 export const getUserPositionInfo = async (userId: string, jobId: string) => {
+    let jobOid = new mongoose.Types.ObjectId(jobId)
+    let userOid = new mongoose.Types.ObjectId(userId)
     let pos = await SelectedModel.find({})
         .populate('job')
         .populate('user')
         .populate('position')
-    return pos.filter(v => v['job']._id === jobId && v['user']._id === userId)
+    return pos.filter(v => jobOid.equals(v['job']._id) && userOid.equals(v['user']._id))
         .pop()
 }

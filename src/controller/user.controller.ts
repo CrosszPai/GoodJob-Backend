@@ -53,7 +53,7 @@ export class UserController {
 
     static async editUserProfile(req: Request, res: Response) {
         let token = req.headers.idtoken;
-        let {info} = req.body;
+        let info = req.body;
         try {
             if (typeof (token) !== "string") {
                 throw new Error("invalid token type")
