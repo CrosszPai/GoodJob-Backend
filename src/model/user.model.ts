@@ -74,10 +74,14 @@ export const getAvailableUserForJob = async (jobID: string, condition: object) =
     let job = await JobModel.findOne({
         _id: new mongoose.Types.ObjectId(jobID)
     });
+    let search = job['tags'].map((v: string) => ({ interested: v }))
+    if(search.length <= 0) {
+        return []
+    }
     let users = await UserModel.find(
         {
             $or: [
-                ...job['tags'].map((v: string) => ({ interested: v })),
+                ...search,
             ],
         }
     ).populate({

@@ -49,14 +49,22 @@ export const createJob = async (email: string, { description, finish_date, locat
         description,
         location,
         owner: user._id,
+        positions:[]
     });
-    console.log(job);
-    let saving = await job.save()
-    console.log(saving);
-    saving['positions'] = await Promise.all(positions.map(async (position) => {
+    console.log(job?.['positions']?.lenght);
+    
+    
+    await job.save();
+    let newjob = await JobModel.findOne({
+        _id:job._id
+    })
+    let tobeadd =  await Promise.all(positions.map(async (position) => {
         return await createNewPosition(job._id, { ...position })
     }))
-    const l = await saving.save();
+    for (let index = 0; index < tobeadd.length; index++) {
+        newjob['positions'].push(tobeadd[index])
+    }
+    let l = await newjob.save()
     if (mode === 'auto') {
         let users = await getAvailableUserForJob(job._id, {});
         users = shuffle(users)

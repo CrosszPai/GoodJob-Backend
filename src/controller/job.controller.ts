@@ -26,7 +26,9 @@ export class JobController {
             let uid = await verify(token);
             let userRecord = await admin.auth().getUser(uid);
             let w = await getUserById(uid);
+                       
             if (userRecord.email?.length === 0 || !userRecord.email) {
+                console.log(userRecord.email,'email');
                 return res.status(401)
                     .send('Bad request')
             }
