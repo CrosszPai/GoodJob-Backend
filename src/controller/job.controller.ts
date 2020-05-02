@@ -26,13 +26,13 @@ export class JobController {
             let uid = await verify(token);
             let userRecord = await admin.auth().getUser(uid);
             let w = await getUserById(uid);
-                       
-            if (userRecord.email?.length === 0 || !userRecord.email) {
-                console.log(userRecord.email,'email');
+
+            if ((!userRecord.email || !userRecord.providerData[0].email)) {
+                console.log(userRecord.email, userRecord.providerData[0].email, 'email');
                 return res.status(401)
                     .send('Bad request')
             }
-            let job = await createJob(userRecord.email, info);
+            let job = await createJob(userRecord.email || userRecord.providerData[0].email, info);
             res.json(job)
         } catch (error) {
             console.log(error);

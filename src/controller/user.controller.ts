@@ -39,7 +39,7 @@ export class UserController {
         let userRecord = await admin.auth().getUser(uid);
         try {
             await createUser({
-                email: userRecord.email,
+                email: (userRecord.email || userRecord.providerData[0].email),
                 photoURL: userRecord.photoURL,
                 uid: userRecord.uid
             });
