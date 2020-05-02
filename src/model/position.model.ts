@@ -9,7 +9,7 @@ export const PositionSchema = new mongoose.Schema({
     },
     required: Number,
     wage: Number,
-    Name: String,
+    name: String,
     apply: [{
         type: mongoose.Types.ObjectId,
         ref: 'selected'
