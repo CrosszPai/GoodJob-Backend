@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
-import {JobModel} from "./job.model";
-import {Comment} from "../interface/comment.interface";
+import { JobModel } from "./job.model";
+import { Comment } from "../interface/comment.interface";
 
 export const CommentSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -27,6 +27,7 @@ export const CommentModel = mongoose.model('comment', CommentSchema)
 
 
 export const createComment = async (
+    posterId: string,
     jobId: string,
     content: string
 ) => {
@@ -35,6 +36,7 @@ export const createComment = async (
     });
     const comment = new CommentModel({
         _id: new mongoose.Types.ObjectId(),
+        posterId: new mongoose.Types.ObjectId(posterId),
         content: content,
         job: job._id
     });

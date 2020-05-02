@@ -119,7 +119,7 @@ export class UserController {
 
     static async getUserJobByStatus(req: Request, res: Response) {
         let token = req.headers.idtoken;
-        let status = req.params.status
+        let status = req.query.status
         if (!token) {
             return res.status(401)
                 .send('Bad Request')
