@@ -26,6 +26,7 @@ export const createNewPosition = async (jobId: string, { name, required, wage }:
         required,
         wage
     });
+    console.log('created');
     let sp = await pos.save();
     job['positions'].push(sp);
     await job.save();

@@ -63,6 +63,7 @@ export const createJob = async (email: string, { description, finish_date, locat
     let tobeadd = await Promise.all(positions.map(async (position) => {
         return await createNewPosition(job._id, { ...position })
     }))
+    console.log(tobeadd);
     for (let index = 0; index < tobeadd.length; index++) {
         newjob['positions'].push(tobeadd[index])
     }
