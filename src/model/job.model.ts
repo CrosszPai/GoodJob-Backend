@@ -10,8 +10,8 @@ export const JobSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     title: String,
     description: String,
-    start_date: Number,
-    finish_date: Number,
+    start_date: Date,
+    finish_date: Date,
     location: Object,
     positions: [{
         type: mongoose.Types.ObjectId,
