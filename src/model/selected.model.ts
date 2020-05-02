@@ -11,10 +11,7 @@ export const SelectedSchema = new mongoose.Schema({
         ref: 'user'
     },
     status: String,
-    position: {
-        type: mongoose.Types.ObjectId,
-        ref: 'position'
-    },
+    position: String,
     created: {
         type: Date,
         default: Date.now()
@@ -93,8 +90,6 @@ export const getUserPositionInfo = async (userId: string, jobId: string) => {
     let userOid = new mongoose.Types.ObjectId(userId)
     let pos = await SelectedModel.find({})
         .populate('job')
-        .populate('user')
-        .populate('position')
     return pos.filter(v => jobOid.equals(v['job']._id) && userOid.equals(v['user']._id))
         .pop()
 }
