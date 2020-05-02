@@ -51,12 +51,12 @@ export const createJob = async (email: string, { description, finish_date, locat
         owner: user._id,
     });
     console.log(job);
-    job = await job.save()
-    console.log(job);
-    job['positions'] = await Promise.all(positions.map(async (position) => {
+    let saving = await job.save()
+    console.log(saving);
+    saving['positions'] = await Promise.all(positions.map(async (position) => {
         return await createNewPosition(job._id, { ...position })
     }))
-    const l = await job.save();
+    const l = await saving.save();
     if (mode === 'auto') {
         let users = await getAvailableUserForJob(job._id, {});
         users = shuffle(users)
