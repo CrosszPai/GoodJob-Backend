@@ -38,10 +38,11 @@ export const JobSchema = new mongoose.Schema({
 });
 export const JobModel = mongoose.model('job', JobSchema);
 
-export const createJob = async (email: string, { description, finish_date, location, mode, positions, start_date, title, tags }: Job): Promise<mongoose.Document> => {
+export const createJob = async (email: string, { description, finish_date, location, mode, positions, start_date, title }: Job): Promise<mongoose.Document> => {
     let user = await UserModel.findOne({
         email
     });
+    let tags = positions.map(v => v.name)
     let job = new JobModel({
         _id: new mongoose.Types.ObjectId(),
         title,
@@ -54,8 +55,6 @@ export const createJob = async (email: string, { description, finish_date, locat
         mode,
         tags
     });
-    console.log(job?.['positions']?.lenght);
-
 
     await job.save();
     let newjob = await JobModel.findOne({
