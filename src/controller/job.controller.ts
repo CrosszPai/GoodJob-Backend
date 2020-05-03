@@ -73,7 +73,8 @@ export class JobController {
                     .send("invalid token type")
             }
             let uid = await verify(token);
-            let a = await updateSelected(jobId, uid, 'accept');
+            let user = await getUserById(uid)
+            let a = await updateSelected(jobId, user._id, 'accept');
             res.send(a)
         } catch (error) {
             console.log(error);
