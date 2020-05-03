@@ -130,6 +130,8 @@ export class UserController {
         try {
             let uid = await verify(token);
             let user = await getUserById(uid)
+            console.log(user,uid,'user');
+            
             let jobs = await getUserSelectedByStatus(user._id, status)
             return res.json(jobs)
         } catch (error) {
