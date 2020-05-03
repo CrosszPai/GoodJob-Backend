@@ -36,7 +36,7 @@ export const createComment = async (
     });
     const comment = new CommentModel({
         _id: new mongoose.Types.ObjectId(),
-        posterId: new mongoose.Types.ObjectId(posterId),
+        posterId: mongoose.Types.ObjectId(posterId),
         content: content,
         job: job._id
     });

@@ -21,7 +21,7 @@ export const PositionModel = mongoose.model('position', PositionSchema);
 export const createNewPosition = async (jobId: string, { name, required, wage }: Position) => {
     let job = await JobModel.findById(jobId);
     let pos = new PositionModel({
-        job: new mongoose.Types.ObjectId(jobId),
+        job: mongoose.Types.ObjectId(jobId),
         name,
         required,
         wage
