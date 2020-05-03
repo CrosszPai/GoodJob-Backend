@@ -1,4 +1,4 @@
-import mongoose, {Types} from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 
 export const SelectedSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -37,9 +37,11 @@ export const updateSelected = async (jobId: string, userId: string, status: stri
     let userOid = new mongoose.Types.ObjectId(userId)
     let selects = await SelectedModel.find({})
         .populate('user')
-        .populate('job')
+        .populate({
+            path: 'job'
+        })
     console.log(selects);
-    
+
     let target = selects.filter(v => userOid.equals(v['user']._id) && jobOid.equals(v['job']._id)).pop()
     target['status'] = status
     return target.save()
