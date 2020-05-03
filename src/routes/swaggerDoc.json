@@ -156,7 +156,7 @@
         }
       }
     },
-    "/user/job": {
+    "/user/job/select": {
       "get": {
         "description": "",
         "parameters": [

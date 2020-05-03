@@ -7,7 +7,7 @@ UserRoute.get('/', UserController.getUserProfile)
 UserRoute.put('/', UserController.editUserProfile)
 UserRoute.get('/all', UserController.getAllUserWithInfo)
 UserRoute.get('/:id', UserController.getUserProfileById)
-UserRoute.get('/job', UserController.getUserJobByStatus)
+UserRoute.get('/job/select', UserController.getUserJobByStatus)
 UserRoute.get('/job/:id', UserController.getUserJobPosition)
 
 export default UserRoute
