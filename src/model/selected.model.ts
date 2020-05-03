@@ -87,7 +87,7 @@ export const removeExpireInvite = async () => {
 }
 
 export const getUserSelectedByStatus = async (userId: string, status: string) => {
-    let userOid = Types.ObjectId(userId)
+    let userOid = mongoose.Types.ObjectId(userId)
     let select = await SelectedModel.find(
         {
             status
@@ -95,11 +95,11 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     )
         .populate('user')
         .populate('job')
-    console.log(userOid, userId);
+    console.log(userOid, userId, 'id');
 
-    console.log(select, '\n');
+    console.log(select, 'before filter\n');
     console.log(select.filter(v => userOid.equals(v['user']._id)))
-        
+
     return select.filter(v => userOid.equals(v['user']._id))
 }
 
