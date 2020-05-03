@@ -38,6 +38,8 @@ export const updateSelected = async (jobId: string, userId: string, status: stri
     let selects = await SelectedModel.find({})
         .populate('user')
         .populate('job')
+    console.log(selects);
+    
     let target = selects.filter(v => userOid.equals(v['user']._id) && jobOid.equals(v['job']._id)).pop()
     target['status'] = status
     return target.save()
