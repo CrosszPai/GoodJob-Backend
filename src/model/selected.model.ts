@@ -87,7 +87,7 @@ export const removeExpireInvite = async () => {
 }
 
 export const getUserSelectedByStatus = async (userId: string, status: string) => {
-    let userOid = new Types.ObjectId(userId)
+    let userOid = Types.ObjectId(userId)
     let select = await SelectedModel.find(
         {
             status
