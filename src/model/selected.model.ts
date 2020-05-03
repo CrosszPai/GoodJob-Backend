@@ -24,8 +24,8 @@ export const SelectedModel = mongoose.model('selected', SelectedSchema);
 export const addSelected = async (jobId: string, userId: string, status: string, position: string) => {
     let selected = new SelectedModel({
         _id: new mongoose.Types.ObjectId(),
-        job:  mongoose.Types.ObjectId(jobId),
-        user:  mongoose.Types.ObjectId(userId),
+        job: mongoose.Types.ObjectId(jobId),
+        user: mongoose.Types.ObjectId(userId),
         status,
         position
     });
@@ -33,8 +33,8 @@ export const addSelected = async (jobId: string, userId: string, status: string,
 };
 
 export const updateSelected = async (jobId: string, userId: string, status: string) => {
-    let jobOid =  mongoose.Types.ObjectId(jobId)
-    let userOid =  mongoose.Types.ObjectId(userId)
+    let jobOid = mongoose.Types.ObjectId(jobId)
+    let userOid = mongoose.Types.ObjectId(userId)
     let selects = await SelectedModel.find({})
         .populate('user')
         .populate({
@@ -95,6 +95,11 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     )
         .populate('user')
         .populate('job')
+    console.log(userOid, userId);
+
+    console.log(select, '\n');
+    console.log(select.filter(v => userOid.equals(v['user']._id)))
+        
     return select.filter(v => userOid.equals(v['user']._id))
 }
 
