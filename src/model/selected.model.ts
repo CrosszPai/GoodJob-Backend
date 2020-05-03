@@ -95,10 +95,13 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     )
         .populate('user')
         .populate('job')
-    console.log(userOid, userId, 'id');
+    console.log(userOid, userId, 'id');;
+    console.log(select.filter(v => {
+        if (v['user'].email === 'x_boat_@hotmail.com')
+            console.log(userOid.equals(v['user']._id), v['user']._id, '\n');
 
-    console.log(select, 'before filter\n');
-    console.log(select.filter(v => userOid.equals(v['user']._id)))
+        return userOid.equals(v['user']._id)
+    }))
 
     return select.filter(v => userOid.equals(v['user']._id))
 }
