@@ -49,7 +49,7 @@ export const updateSelected = async (jobId: string, userId: string, status: stri
 
 export const getSelectedUser = async (jobId: string) => {
     return SelectedModel.find({
-        job: jobId
+        job: mongoose.Types.ObjectId(jobId)
     })
         .populate('user');
 };
@@ -90,29 +90,22 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     let userOid = mongoose.Types.ObjectId(userId)
     let select = await SelectedModel.find(
         {
-            status
+            status,
+            user:userOid
         }
     )
         .populate('user')
         .populate('job')
-    console.log(userOid, userId, 'id');;
-    console.log(select.filter(v => {
-        console.log(v['user']);
-        
-        if (v['user'].email === 'x_boat_@hotmail.com')
-            console.log(userOid.equals(v['user']._id), v['user']._id, '\n');
-
-        return userOid.equals(v['user']._id)
-    }))
-
     return select.filter(v => userOid.equals(v['user']._id))
 }
 
 export const getUserPositionInfo = async (userId: string, jobId: string) => {
     let jobOid = mongoose.Types.ObjectId(jobId)
     let userOid = mongoose.Types.ObjectId(userId)
-    let pos = await SelectedModel.find({})
+    let pos = await SelectedModel.find({
+        job:jobOid,
+        user:userOid
+    })
         .populate('job')
-    return pos.filter(v => jobOid.equals(v['job']._id) && userOid.equals(v['user']._id))
-        .pop()
+    return pos
 }
