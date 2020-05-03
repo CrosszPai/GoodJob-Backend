@@ -56,7 +56,7 @@ export const getSelectedUser = async (jobId: string) => {
 
 export const getSelectingUser = async (jobId: string) => {
     return SelectedModel.find({
-        job: jobId,
+        job: mongoose.Types.ObjectId(jobId),
         status: 'selecting'
     })
         .populate('user');
@@ -97,6 +97,8 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
         .populate('job')
     console.log(userOid, userId, 'id');;
     console.log(select.filter(v => {
+        console.log(v['user']);
+        
         if (v['user'].email === 'x_boat_@hotmail.com')
             console.log(userOid.equals(v['user']._id), v['user']._id, '\n');
 
