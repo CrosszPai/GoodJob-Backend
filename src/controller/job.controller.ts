@@ -64,9 +64,10 @@ export class JobController {
 
     }
 
-    static async acceptJobByUser(req: Request, res: Response) {
+    static async responseJobByUser(req: Request, res: Response) {
         let jobId = req.params['id'];
         let token = req.headers.idtoken;
+        let status = req.query.status
         try {
             if (typeof (token) !== "string") {
                 return res.status(401)
@@ -74,7 +75,7 @@ export class JobController {
             }
             let uid = await verify(token);
             let user = await getUserById(uid)
-            let a = await updateSelected(jobId, user._id, 'accept');
+            let a = await updateSelected(jobId, user._id, status);
             res.send(a)
         } catch (error) {
             console.log(error);
@@ -201,13 +202,13 @@ export class JobController {
                 .send('invalid token')
         }
         try {
-            let userid = new Types.ObjectId(user)
+            let userId = new Types.ObjectId(user)
             let jobId = new Types.ObjectId(job)
             await verify(token);
-            let jobs = await SelectedModel.find({})
-                .populate('job')
-                .populate('user')
-            let target = jobs.filter(v => userid.equals(v['user']._id) && jobId.equals(v['job'].id)).pop()
+            let target = await SelectedModel.findOne({
+                job:jobId,
+                user:userId
+            })
             target['status'] = 'finished'
             await target.save()
             return res.send('success')
@@ -254,6 +255,25 @@ export class JobController {
             let users = await getSelectingUser(jobId)
             return res.json(users)
         } catch (error) {
+            res.status(401)
+                .send(error)
+        }
+    }
+    static async responseJobByOwner(req: Request, res: Response) {
+        let jobId = req.params['id'];
+        let userId = req.params['user'];
+        let token = req.headers.idtoken;
+        let status = req.query.status
+        try {
+            if (typeof (token) !== "string") {
+                return res.status(401)
+                    .send("invalid token type")
+            }
+            await verify(token);
+            let a = await updateSelected(jobId, userId, status);
+            res.send(a)
+        } catch (error) {
+            console.log(error);
             res.status(401)
                 .send(error)
         }
