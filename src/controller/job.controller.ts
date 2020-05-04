@@ -183,6 +183,7 @@ export class JobController {
         try {
             await verify(token);
             let jobs = await getAvailableJobForUser()
+            
             return res.json(jobs)
         } catch (error) {
             res.status(401)

@@ -114,5 +114,5 @@ export const getAvailableJobForUser = async () => {
     let userJob = await PositionModel.find({})
         .populate('job')
         .populate('apply')
-    return userJob.filter(v => v['required'] > v['apply'].lenght)
+    return userJob.filter(v => v['required'] > v['apply'].length)
 }
