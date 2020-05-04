@@ -337,7 +337,7 @@
         }
       }
     },
-    "/job/{id}/accept": {
+    "/job/{id}/accepting": {
       "put": {
         "description": "user ตอบรับ invite",
         "parameters": [
@@ -346,6 +346,36 @@
             "required": true,
             "name": "id",
             "description": "jobID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/accepting/{user}": {
+      "put": {
+        "description": "owber ตอบรับ user apply",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "user",
+            "description": "userID",
             "schema": {
               "type": "string"
             }
