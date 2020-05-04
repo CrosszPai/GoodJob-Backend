@@ -67,7 +67,12 @@ export const getUserById = async (id: string): Promise<mongoose.Document> => {
             {
                 uid: id
             }
-    );
+    ).populate({
+        path: 'selectedBy',
+        populate: {
+            path: "job"
+        }
+    })
 };
 
 export const getAvailableUserForJob = async (jobID: string, condition: object) => {
@@ -75,7 +80,7 @@ export const getAvailableUserForJob = async (jobID: string, condition: object) =
         _id: mongoose.Types.ObjectId(jobID)
     });
     let search = job['tags'].map((v: string) => ({ interested: v }))
-    if(search.length <= 0) {
+    if (search.length <= 0) {
         return []
     }
     let users = await UserModel.find(

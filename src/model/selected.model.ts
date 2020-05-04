@@ -35,16 +35,21 @@ export const addSelected = async (jobId: string, userId: string, status: string,
 export const updateSelected = async (jobId: string, userId: string, status: string) => {
     let jobOid = mongoose.Types.ObjectId(jobId)
     let userOid = mongoose.Types.ObjectId(userId)
-    let selects = await SelectedModel.find({})
-        .populate('user')
-        .populate({
-            path: 'job'
+    let selects = await SelectedModel.findOneAndUpdate({
+        user: userOid,
+        job: jobOid
+    }, {
+        $set: {
+            status
+        }
+    },
+        {
+            new: true
         })
-    console.log(selects);
+        .populate('job')
+        .populate('user')
 
-    let target = selects.filter(v => userOid.equals(v['user']._id) && jobOid.equals(v['job']._id)).pop()
-    target['status'] = status
-    return target.save()
+    return selects
 };
 
 export const getSelectedUser = async (jobId: string, status: string) => {

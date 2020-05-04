@@ -6,10 +6,11 @@ import isArrayEmpty from '../utils/isArrayEmpty'
 import verify from "../utils/verify";
 import { createJob, getAvailableJobForUser, JobModel, updateJob } from "../model/job.model";
 import { addSelected, getSelectedUser, getSelectingUser, SelectedModel, updateSelected } from "../model/selected.model";
-import { getUserById } from "../model/user.model";
+import { getUserById, getAvailableUserForJob } from "../model/user.model";
 import { checkIfOwner } from "../utils/checkIsOwner";
-import { Types } from "mongoose";
+import { Types, mongo } from "mongoose";
 import { addUserApply } from "../model/position.model";
+import shuffle from "../utils/shuffleArray";
 
 export class JobController {
     static async postJob(req: Request, res: Response) {
@@ -75,8 +76,22 @@ export class JobController {
             }
             let uid = await verify(token);
             let user = await getUserById(uid)
-            let a = await updateSelected(jobId, user._id, status);
-            res.send(a)
+            let updated = await updateSelected(jobId, user._id, status);
+            if (status === 'cancle' && updated['job']['mode'] === 'auto') {
+                let newUsers = await getAvailableUserForJob(updated['job']._id, {})
+                let newUser = shuffle(newUsers).pop()
+                let oid = Types.ObjectId(updated._id)
+                user['selectedBy'] = user['selectedBy'].filter(v => !oid.equals(v._id))
+                await user.save()
+                updated = await SelectedModel.findById(updated._id)
+                updated['user'] = newUser._id
+                updated['status'] = 'inviting'
+                await updated.save()
+            } else if (status === 'accept') {
+                user['selectedBy'].push(Types.ObjectId(updated._id))
+                await user.save()
+            }
+            res.send(updated)
         } catch (error) {
             console.log(error);
             res.status(401)
@@ -95,7 +110,7 @@ export class JobController {
         try {
             await verify(token);
             console.log(status);
-            
+
             res.json(await getSelectedUser(jobId, status))
         } catch (error) {
             res.status(401)
@@ -184,7 +199,7 @@ export class JobController {
         try {
             await verify(token);
             let jobs = await getAvailableJobForUser()
-            
+
             return res.json(jobs)
         } catch (error) {
             res.status(401)
@@ -206,8 +221,8 @@ export class JobController {
             let jobId = new Types.ObjectId(job)
             await verify(token);
             let target = await SelectedModel.findOne({
-                job:jobId,
-                user:userId
+                job: jobId,
+                user: userId
             })
             target['status'] = 'finished'
             await target.save()
@@ -271,7 +286,12 @@ export class JobController {
             }
             await verify(token);
             let a = await updateSelected(jobId, userId, status);
-            res.send(a)
+            if (status === 'accept') {
+                let user = await getUserById(userId)
+                user['selectedBy'].push(a._id)
+                await user.save()
+            }
+            res.json(await getSelectedUser(jobId, 'applying'))
         } catch (error) {
             console.log(error);
             res.status(401)

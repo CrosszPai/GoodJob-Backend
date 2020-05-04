@@ -83,7 +83,6 @@ export const createJob = async (email: string, { description, finish_date, locat
                 let w = await addSelected(job._id, current_user._id, 'inviting', name);
                 w['wating'] = Date.now()
                 await w.save()
-                current_user['selectedBy'] = [...current_user['selectedBy'], w._id];
                 await current_user.save()
                 index++
             }
