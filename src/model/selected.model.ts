@@ -47,10 +47,17 @@ export const updateSelected = async (jobId: string, userId: string, status: stri
     return target.save()
 };
 
-export const getSelectedUser = async (jobId: string) => {
-    return SelectedModel.find({
-        job: mongoose.Types.ObjectId(jobId)
-    })
+export const getSelectedUser = async (jobId: string, status: string) => {
+    return SelectedModel.find(
+        status ?
+            {
+                job: mongoose.Types.ObjectId(jobId),
+                status
+            } :
+            {
+                job: mongoose.Types.ObjectId(jobId),
+            }
+    )
         .populate('user');
 };
 
@@ -91,7 +98,7 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     let select = await SelectedModel.find(
         {
             status,
-            user:userOid
+            user: userOid
         }
     )
         .populate('user')
@@ -103,8 +110,8 @@ export const getUserPositionInfo = async (userId: string, jobId: string) => {
     let jobOid = mongoose.Types.ObjectId(jobId)
     let userOid = mongoose.Types.ObjectId(userId)
     let pos = await SelectedModel.find({
-        job:jobOid,
-        user:userOid
+        job: jobOid,
+        user: userOid
     })
         .populate('job')
     return pos

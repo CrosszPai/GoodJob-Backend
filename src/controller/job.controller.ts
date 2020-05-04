@@ -1,14 +1,14 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import admin from "firebase-admin";
 
-import {Job} from "../interface/job.interface";
+import { Job } from "../interface/job.interface";
 import isArrayEmpty from '../utils/isArrayEmpty'
 import verify from "../utils/verify";
-import {createJob, getAvailableJobForUser, JobModel, updateJob} from "../model/job.model";
-import {addSelected, getSelectedUser, getSelectingUser, SelectedModel, updateSelected} from "../model/selected.model";
-import {getUserById} from "../model/user.model";
-import {checkIfOwner} from "../utils/checkIsOwner";
-import {Types} from "mongoose";
+import { createJob, getAvailableJobForUser, JobModel, updateJob } from "../model/job.model";
+import { addSelected, getSelectedUser, getSelectingUser, SelectedModel, updateSelected } from "../model/selected.model";
+import { getUserById } from "../model/user.model";
+import { checkIfOwner } from "../utils/checkIsOwner";
+import { Types } from "mongoose";
 
 export class JobController {
     static async postJob(req: Request, res: Response) {
@@ -83,16 +83,17 @@ export class JobController {
         }
     }
 
-    static async getAllUserByJobId(req: Request, res: Response) {
+    static async getUserByJobId(req: Request, res: Response) {
         let jobId = req.params['id'];
         let token = req.headers.idtoken;
+        let status = req.params.mode
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token type')
         }
         try {
             await verify(token);
-            res.json(await getSelectedUser(jobId))
+            res.json(await getSelectedUser(jobId, status))
         } catch (error) {
             res.status(401)
                 .send(error)
@@ -132,7 +133,7 @@ export class JobController {
         try {
             let uid = await verify(token);
             let jobs = await JobModel.find(
-                mode ? {mode} : {}
+                mode ? { mode } : {}
             )
                 .populate('owner')
                 .populate({
