@@ -349,6 +349,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "status ที่จะส่ง",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -372,10 +381,19 @@
             }
           },
           {
-            "in": "query",
+            "in": "path",
             "required": true,
             "name": "user",
             "description": "userID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "status ที่จะส่ง",
             "schema": {
               "type": "string"
             }
