@@ -31,3 +31,12 @@ export const createNewPosition = async (jobId: string, { name, required, wage }:
     await job.save();
     return sp
 };
+
+export const addUserApply = async (jobID: string, positionName: string, selectedID: string) => {
+    let apply = await PositionModel.findOne({
+        job: mongoose.Types.ObjectId(jobID),
+        name: positionName
+    })
+    apply['apply'].push(mongoose.Types.ObjectId(selectedID))
+    return await apply.save()
+}

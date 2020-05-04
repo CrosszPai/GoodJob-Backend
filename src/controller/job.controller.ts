@@ -9,6 +9,8 @@ import { addSelected, getSelectedUser, getSelectingUser, SelectedModel, updateSe
 import { getUserById } from "../model/user.model";
 import { checkIfOwner } from "../utils/checkIsOwner";
 import { Types } from "mongoose";
+import { PositionModel } from "../../dist/model/position.model";
+import { addUserApply } from "../model/position.model";
 
 export class JobController {
     static async postJob(req: Request, res: Response) {
@@ -116,6 +118,8 @@ export class JobController {
                     .send('error')
             let w = await updateSelected(jobId, info.userId, 'inviting')
             w['waiting'] = Date.now()
+            await w.save()
+            let pos = await addUserApply(jobId, w['position'], w._id)
             res.send('invite success')
         } catch (error) {
             res.status(401)
