@@ -86,13 +86,15 @@ export class JobController {
     static async getUserByJobId(req: Request, res: Response) {
         let jobId = req.params['id'];
         let token = req.headers.idtoken;
-        let status = req.params.mode
+        let status = req.query.mode
         if (typeof (token) !== "string") {
             return res.status(401)
                 .send('invalid token type')
         }
         try {
             await verify(token);
+            console.log(status);
+            
             res.json(await getSelectedUser(jobId, status))
         } catch (error) {
             res.status(401)
