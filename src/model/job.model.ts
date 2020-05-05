@@ -136,9 +136,12 @@ export const getAvailableJobForUser = async (uid: string) => {
         .populate('apply')
     let w = userJob.filter(v => {
         let jobOid = mongoose.Types.ObjectId(v['job']['_id'])
-
+        let jobOwnerId = mongoose.Types.ObjectId(v['job']['owner']['_id'])
         if (alreadyJob.includes(jobOid.toHexString())) {
             console.log(jobOid.toHexString());
+            return false
+        }
+        if (jobOwnerId.equals(user._id)) {
             return false
         }
         return (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual'
