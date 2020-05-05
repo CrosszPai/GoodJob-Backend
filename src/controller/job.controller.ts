@@ -130,10 +130,12 @@ export class JobController {
         try {
             let uid = await verify(token);
             let user = await getUserById(uid)
-            if (!(await checkIfOwner(user._id, jobId)))
+            let check = await checkIfOwner(user._id, jobId)
+            if (!check) {
+                console.log('not owner dog');
                 return res.status(404)
                     .send('error')
-
+            }
             let w = await updateSelected(jobId, info.userId, 'inviting')
             let w_2 = await SelectedModel.findOne({
                 _id: Types.ObjectId(w._id)
