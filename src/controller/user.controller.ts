@@ -138,7 +138,7 @@ export class UserController {
             let jobs_obj = await Promise.all(jobs.map(async (v) => {
                 let obj = v.toObject()
                 let obj_2 = obj.job
-                if (v['status'] !== 'inviting') {
+                if (v['status'] !== 'selecting') {
                     obj_2.status = obj.status
                     obj_2.position = obj.position
                     let pos = await PositionModel.findOne({
@@ -146,7 +146,6 @@ export class UserController {
                         name: obj_2.position
                     })
                     obj_2.wage = pos['wage']
-
                 }
                 return obj_2
             }))
