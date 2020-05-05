@@ -112,7 +112,12 @@ export const updateJob = async (id: string, info: Job): Promise<mongoose.Documen
 };
 export const getAvailableJobForUser = async () => {
     let userJob = await PositionModel.find({})
-        .populate('job')
+        .populate({
+            path: 'job',
+            populate: {
+                path: 'owner'
+            }
+        })
         .populate('apply')
     let w = userJob.filter(v => (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual')
     let toBeReturn = []
