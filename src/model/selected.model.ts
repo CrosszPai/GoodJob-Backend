@@ -110,7 +110,6 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
                 user: userOid
             }
     )
-        .populate('user')
         .populate('job')
     return select
 }
