@@ -108,7 +108,7 @@ export const getUserSelectedByStatus = async (userId: string, status: string) =>
     )
         .populate('user')
         .populate('job')
-    return select.filter(v => userOid.equals(v['user']._id))
+    return select
 }
 
 export const getUserPositionInfo = async (userId: string, jobId: string) => {
