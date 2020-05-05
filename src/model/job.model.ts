@@ -1,10 +1,12 @@
-import mongoose from 'mongoose'
+import mongoose, { model } from 'mongoose'
 import { Job } from "../interface/job.interface";
 import { getAvailableUserForJob, UserModel } from "./user.model";
 import { addSelected } from './selected.model';
 import { createNewPosition, PositionModel } from './position.model';
 import checkArrayEmpty from "../utils/isArrayEmpty";
 import shuffle from '../utils/shuffleArray'
+import _ from 'lodash'
+import groupBy from '../utils/groupBy';
 
 export const JobSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
@@ -108,10 +110,33 @@ export const updateJob = async (id: string, info: Job): Promise<mongoose.Documen
     job['updated'] = Date.now()
     return await job.save()
 };
-
 export const getAvailableJobForUser = async () => {
     let userJob = await PositionModel.find({})
         .populate('job')
         .populate('apply')
-    return userJob.filter(v => (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual')
+    let w = userJob.filter(v => (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual')
+    let toBeReturn = []
+    let grouped = _.groupBy(w, (n) => {
+        return n['job']['_id']
+    })
+    for (const key in grouped) {
+        if (grouped.hasOwnProperty(key)) {
+            let mod = grouped[key][0]['job'].toObject()
+            mod.position = grouped[key].map(m => (
+                m['name']
+            ))
+            mod.posWage = grouped[key].map(m => (
+                m['wage']
+            ))
+            mod.posReq = grouped[key].map(m => (
+                m['required']
+            ))
+            mod.posHave = grouped[key].map(m => (
+                m['apply'].length
+            ))
+            delete mod.positions
+            toBeReturn.push(mod)
+        }
+    }
+    return toBeReturn
 }

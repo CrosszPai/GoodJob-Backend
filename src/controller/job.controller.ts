@@ -192,12 +192,12 @@ export class JobController {
 
     static async getAvailableJob(req: Request, res: Response) {
         let token = req.headers.idtoken;
-        if (typeof (token) !== "string") {
-            return res.status(401)
-                .send('invalid token')
-        }
+        // if (typeof (token) !== "string") {
+        //     return res.status(401)
+        //         .send('invalid token')
+        // }
         try {
-            await verify(token);
+            // await verify(token);
             let jobs = await getAvailableJobForUser()
 
             return res.json(jobs)
