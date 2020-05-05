@@ -135,7 +135,7 @@ export class UserController {
             console.log(user, uid, 'user');
 
             let jobs = await getUserSelectedByStatus(user._id, status)
-            let jobs_obj = jobs.map(async v => {
+            let jobs_obj = await Promise.all(jobs.map(async (v) => {
                 let obj = v.toObject()
                 let obj_2 = obj.job
                 obj_2.status = obj.status
@@ -146,7 +146,8 @@ export class UserController {
                 })
                 obj_2.wage = pos['wage']
                 return obj_2
-            })
+            }))
+
             return res.json(jobs_obj)
         } catch (error) {
             console.log(error);
