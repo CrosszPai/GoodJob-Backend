@@ -132,9 +132,14 @@ export class JobController {
             if (!(await checkIfOwner(uid, jobId)))
                 return res.status(404)
                     .send('error')
+
             let w = await updateSelected(jobId, info.userId, 'inviting')
-            w['waiting'] = Date.now()
-            await w.save()
+            let w_2 = await SelectedModel.findOne({
+                _id: Types.ObjectId(w._id)
+            })
+            w_2['waiting'] = Date.now()
+            w_2['position'] = info.pos
+            await w_2.save()
             res.send('invite success')
         } catch (error) {
             console.log(error);
