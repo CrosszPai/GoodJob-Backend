@@ -7,7 +7,7 @@ export const checkIfOwner = async (userId: string, jobId: string): Promise<boole
     let job = await JobModel.findById(jobId)
         .populate('owner')
     console.log(user, job);
-    console.log(user.equals(job['owner']));
+    console.log(user.equals(job['owner']['_id']), 'resultdog');
 
     return user.equals(job['owner'])
 }
