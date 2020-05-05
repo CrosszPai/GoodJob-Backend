@@ -138,6 +138,7 @@ export class UserController {
                 let obj_2 = obj.job
                 obj_2.status = obj.status
                 obj_2.position = obj.position
+                return obj_2
             })
             return res.json(jobs_obj)
         } catch (error) {
