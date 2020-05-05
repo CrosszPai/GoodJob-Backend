@@ -129,7 +129,8 @@ export class JobController {
 
         try {
             let uid = await verify(token);
-            if (!(await checkIfOwner(uid, jobId)))
+            let user = await getUserById(uid)
+            if (!(await checkIfOwner(user._id, jobId)))
                 return res.status(404)
                     .send('error')
 
