@@ -1,8 +1,8 @@
-import {Request, Response} from "express";
-import {createUser, getAllUser, getUserById, updateUser} from '../model/user.model'
+import { Request, Response } from "express";
+import { createUser, getAllUser, getUserById, updateUser } from '../model/user.model'
 import admin from "firebase-admin";
 import verify from "../utils/verify";
-import {getUserPositionInfo, getUserSelectedByStatus} from "../model/selected.model";
+import { getUserPositionInfo, getUserSelectedByStatus } from "../model/selected.model";
 
 export class UserController {
     static async login(req: Request, res: Response) {
@@ -27,7 +27,7 @@ export class UserController {
             }
         } catch (err) {
             console.log(err);
-            
+
             return res.status(401)
                 .send(err)
         }
@@ -130,10 +130,16 @@ export class UserController {
         try {
             let uid = await verify(token);
             let user = await getUserById(uid)
-            console.log(user,uid,'user');
-            
+            console.log(user, uid, 'user');
+
             let jobs = await getUserSelectedByStatus(user._id, status)
-            return res.json(jobs)
+            let jobs_obj = jobs.map(v => {
+                let obj = v.toObject()
+                let obj_2 = obj.job
+                obj_2.status = obj.status
+                obj_2.position = obj.position
+            })
+            return res.json(jobs_obj)
         } catch (error) {
             console.log(error);
             return res.status(401)
@@ -150,7 +156,7 @@ export class UserController {
         try {
             let uid = await verify(token);
             let user = await getUserById(uid)
-            let pos = await getUserPositionInfo(user._id,jobId)
+            let pos = await getUserPositionInfo(user._id, jobId)
             return res.json(pos)
         } catch (error) {
             console.log(error);
