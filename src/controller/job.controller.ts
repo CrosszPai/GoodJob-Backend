@@ -137,6 +137,7 @@ export class JobController {
             await w.save()
             res.send('invite success')
         } catch (error) {
+            console.log(error);
             res.status(401)
                 .send(error)
         }
