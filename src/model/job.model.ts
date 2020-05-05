@@ -115,7 +115,13 @@ export const getAvailableJobForUser = async (uid: string) => {
     let u_selected = await SelectedModel.find({
         user: mongoose.Types.ObjectId(user._id)
     })
-    let alreadyJob = u_selected.map(v => v['job'].toString())
+    let alreadyJob = u_selected
+        .filter(v => v['status'] !== 'inviting'
+            || v['status'] !== 'cancle'
+            || v['status'] !== 'accept'
+            || v['status'] !== 'finihed'
+            || v['status'] !== 'applying'
+        ).map(v => v['job'].toString())
     let userJob = await PositionModel.find({})
         .populate({
             path: 'job',
