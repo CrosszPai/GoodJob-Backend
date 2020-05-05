@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { mongo } from 'mongoose'
 import { User } from "../interface/user.interface";
 import { JobModel } from './job.model';
 
@@ -96,12 +96,14 @@ export const getAvailableUserForJob = async (jobID: string, condition: object) =
         }
     });
     console.log(users, '\n');
-
+    let ownerId = mongoose.Types.ObjectId(job['owner'])
     // console.log(users);
     return users.filter((v) => {
         // check not busy
         console.log(v['selectedBy'].length);
-
+        if (ownerId.equals(v._id)) {
+            return false
+        }
         for (let index = 0; index < v['selectedBy'].length; index++) {
             if (v['selectedBy'][index]['job'].start_date <= job['finish_date'] && v['selectedBy'][index]['job'].finish_date >= job['start_date']) {
                 return false
