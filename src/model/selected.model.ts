@@ -39,11 +39,16 @@ export const updateSelected = async (jobId: string, userId: string, status: stri
         user: userOid,
         job: jobOid
     })
-        .populate('job')
+        .populate({
+            path: 'job',
+            populate: {
+                path: 'owner'
+            }
+        })
         .populate('user')
     selects['status'] = status
-    console.log(selects,status);
-    
+    console.log(selects, status);
+
     return selects.save()
 };
 
