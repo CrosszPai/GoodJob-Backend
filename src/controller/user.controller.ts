@@ -3,6 +3,8 @@ import { createUser, getAllUser, getUserById, updateUser } from '../model/user.m
 import admin from "firebase-admin";
 import verify from "../utils/verify";
 import { getUserPositionInfo, getUserSelectedByStatus } from "../model/selected.model";
+import { PositionModel } from "../model/position.model";
+import { Types } from "mongoose";
 
 export class UserController {
     static async login(req: Request, res: Response) {
@@ -133,11 +135,16 @@ export class UserController {
             console.log(user, uid, 'user');
 
             let jobs = await getUserSelectedByStatus(user._id, status)
-            let jobs_obj = jobs.map(v => {
+            let jobs_obj = jobs.map(async v => {
                 let obj = v.toObject()
                 let obj_2 = obj.job
                 obj_2.status = obj.status
                 obj_2.position = obj.position
+                let pos = await PositionModel.findOne({
+                    job: Types.ObjectId(v['job']['_id']),
+                    name: obj_2.position
+                })
+                obj_2.wage = pos['wage']
                 return obj_2
             })
             return res.json(jobs_obj)
