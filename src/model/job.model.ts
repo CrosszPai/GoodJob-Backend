@@ -1,7 +1,7 @@
 import mongoose, { model } from 'mongoose'
 import { Job } from "../interface/job.interface";
-import { getAvailableUserForJob, UserModel } from "./user.model";
-import { addSelected } from './selected.model';
+import { getAvailableUserForJob, UserModel, getUserById } from "./user.model";
+import { addSelected, SelectedModel } from './selected.model';
 import { createNewPosition, PositionModel } from './position.model';
 import checkArrayEmpty from "../utils/isArrayEmpty";
 import shuffle from '../utils/shuffleArray'
@@ -110,7 +110,12 @@ export const updateJob = async (id: string, info: Job): Promise<mongoose.Documen
     job['updated'] = Date.now()
     return await job.save()
 };
-export const getAvailableJobForUser = async () => {
+export const getAvailableJobForUser = async (uid: string) => {
+    let user = await getUserById(uid)
+    let u_selected = await SelectedModel.find({
+        user: mongoose.Types.ObjectId(user._id)
+    })
+    let alreadyJob = u_selected.map(v => v['job'].toString())
     let userJob = await PositionModel.find({})
         .populate({
             path: 'job',
@@ -119,7 +124,13 @@ export const getAvailableJobForUser = async () => {
             }
         })
         .populate('apply')
-    let w = userJob.filter(v => (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual')
+    let w = userJob.filter(v => {
+        let jobOid = mongoose.Types.ObjectId(v['job']['_id'])
+        if (alreadyJob.includes(jobOid.toHexString())) {
+            return false
+        }
+        return (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual'
+    })
     let toBeReturn = []
     let grouped = _.groupBy(w, (n) => {
         return n['job']['_id']

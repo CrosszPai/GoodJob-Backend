@@ -206,9 +206,8 @@ export class JobController {
                 .send('invalid token')
         }
         try {
-            await verify(token);
-            let jobs = await getAvailableJobForUser()
-
+            let uid =  await verify(token);
+            let jobs = await getAvailableJobForUser(uid)
             return res.json(jobs)
         } catch (error) {
             res.status(401)
