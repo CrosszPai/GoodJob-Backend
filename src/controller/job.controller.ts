@@ -130,9 +130,9 @@ export class JobController {
         try {
             let uid = await verify(token);
             let user = await getUserById(uid)
-            let check = await checkIfOwner(user._id, jobId)
-            if (!check) {
-                console.log('not owner dog');
+            let isUser = await checkIfOwner(user._id, jobId)
+            if (!isUser) {
+                console.log('not owner dog',isUser);
                 return res.status(404)
                     .send('error')
             }
