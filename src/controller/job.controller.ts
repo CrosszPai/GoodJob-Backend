@@ -33,8 +33,21 @@ export class JobController {
                 return res.status(401)
                     .send('Bad request')
             }
-            let job = await createJob(userRecord.email || userRecord.providerData[0].email, info);
-            res.json(job)
+            await createJob(userRecord.email || userRecord.providerData[0].email, info);
+            let jobs = await JobModel.find(
+                {}
+            )
+                .populate('owner')
+                .populate({
+                    path: 'positions',
+                    populate: {
+                        path: 'apply',
+                        match: {
+                            status: 'accept'
+                        }
+                    }
+                })
+            return res.send(jobs.filter(v => v['owner'].uid === uid))
         } catch (error) {
             console.log(error);
             res.status(402)
@@ -132,7 +145,7 @@ export class JobController {
             let user = await getUserById(uid)
             let isUser = await checkIfOwner(user._id, jobId)
             if (!isUser) {
-                console.log('not owner dog',isUser);
+                console.log('not owner dog', isUser);
                 return res.status(404)
                     .send('error')
             }
@@ -206,7 +219,7 @@ export class JobController {
                 .send('invalid token')
         }
         try {
-            let uid =  await verify(token);
+            let uid = await verify(token);
             let jobs = await getAvailableJobForUser(uid)
             return res.json(jobs)
         } catch (error) {
