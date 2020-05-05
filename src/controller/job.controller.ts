@@ -207,7 +207,7 @@ export class JobController {
         }
         try {
             let uid =  await verify(token);
-            let jobs = await getAvailableJobForUser(uid)
+            let jobs = await getAvailableJobForUser('GyDKx0X1j6f84cQx5SORPsCefiJ2')
             return res.json(jobs)
         } catch (error) {
             res.status(401)

@@ -116,12 +116,16 @@ export const getAvailableJobForUser = async (uid: string) => {
         user: mongoose.Types.ObjectId(user._id)
     })
     let alreadyJob = u_selected
-        .filter(v => v['status'] !== 'inviting'
-            || v['status'] !== 'cancle'
-            || v['status'] !== 'accept'
-            || v['status'] !== 'finihed'
-            || v['status'] !== 'applying'
+        .filter(v => {
+            return v['status'] === 'inviting'
+                || v['status'] === 'cancle'
+                || v['status'] === 'accept'
+                || v['status'] === 'finihed'
+                || v['status'] === 'applying'
+        }
         ).map(v => v['job'].toString())
+    console.log(alreadyJob);
+
     let userJob = await PositionModel.find({})
         .populate({
             path: 'job',
@@ -131,12 +135,24 @@ export const getAvailableJobForUser = async (uid: string) => {
         })
         .populate('apply')
     let w = userJob.filter(v => {
-        let jobOid = mongoose.Types.ObjectId(v['job']['_id'])
-        if (alreadyJob.includes(jobOid.toHexString())) {
-            return false
-        }
         return (v['required'] > v['apply'].length) && v['job']['mode'] === 'manual'
     })
+    console.log(w.length);
+    console.log(w.map(i=>i._id));
+    
+    let w2 = w.filter(v => {
+        let jobOid = mongoose.Types.ObjectId(v['job']['_id'])
+
+        if (alreadyJob.includes(jobOid.toHexString())) {
+            console.log(jobOid.toHexString());
+            return false
+        }
+        return true
+    })
+    console.log(w2.length);
+
+
+
     let toBeReturn = []
     let grouped = _.groupBy(w, (n) => {
         return n['job']['_id']
