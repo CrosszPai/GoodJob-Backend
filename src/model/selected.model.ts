@@ -42,6 +42,7 @@ export const updateSelected = async (jobId: string, userId: string, status: stri
         .populate('job')
         .populate('user')
     selects['status'] = status
+    console.log(status);
     
     return selects.save()
 };
