@@ -180,7 +180,12 @@ export class JobController {
                         }
                     }
                 })
-            return res.json(jobs.filter(v => v['owner'].uid === uid))
+            return res.json(jobs.filter(v => {
+                let d = new Date()
+                let pass = new Date(v['finish_date'])
+                pass.setDate(pass.getDate() + 1)
+                return v['owner'].uid === uid && d.valueOf() > pass.valueOf()
+            }))
         } catch (error) {
             res.status(401)
                 .send(error)
