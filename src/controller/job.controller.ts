@@ -238,8 +238,8 @@ export class JobController {
                 .send('invalid token')
         }
         try {
-            let userId = new Types.ObjectId(user)
-            let jobId = new Types.ObjectId(job)
+            let userId = Types.ObjectId(user)
+            let jobId = Types.ObjectId(job)
             await verify(token);
             let target = await SelectedModel.findOne({
                 job: jobId,
@@ -306,7 +306,7 @@ export class JobController {
                     .send("invalid token type")
             }
             await verify(token);
-            let a = await updateSelected(jobId, userId, status);
+            let a = await updateSelected('5eb1ff18723bbd0021391b31', '5eb1862c969cab0021368921', status);
             if (status === 'accept') {
                 let user = await getUserById(userId)
                 user['selectedBy'].push(a._id)

@@ -337,7 +337,7 @@
         }
       }
     },
-    "/job/{id}/accepting": {
+    "/job/{id}/useraccept": {
       "put": {
         "description": "user ตอบรับ invite",
         "parameters": [
@@ -367,7 +367,7 @@
         }
       }
     },
-    "/job/{id}/accepting/{user}": {
+    "/job/{id}/owneraccept/{user}": {
       "put": {
         "description": "owber ตอบรับ user apply",
         "parameters": [
