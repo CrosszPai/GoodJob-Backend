@@ -26,14 +26,7 @@ export class JobController {
                     .send('Empty array of info')
             }
             let uid = await verify(token);
-            let userRecord = await admin.auth().getUser(uid);
-
-            if ((!userRecord.email || !userRecord.providerData[0].email)) {
-                console.log(userRecord.email, userRecord.providerData[0].email, 'email');
-                return res.status(401)
-                    .send('Bad request')
-            }
-            await createJob(userRecord.email || userRecord.providerData[0].email, info);
+            await createJob(uid, info);
             let jobs = await JobModel.find(
                 {}
             )
