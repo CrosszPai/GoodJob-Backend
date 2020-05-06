@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Document } from 'mongoose'
 import { JobModel } from './job.model'
 import { Position } from '../interface/position.interface'
 
@@ -32,11 +32,11 @@ export const createNewPosition = async (jobId: string, { name, required, wage }:
     return sp
 };
 
-export const addUserApply = async (jobID: string, positionName: string, selectedID: string) => {
+export const addUserApply = async (selected: Document) => {
     let apply = await PositionModel.findOne({
-        job: mongoose.Types.ObjectId(jobID),
-        name: positionName
+        job: mongoose.Types.ObjectId(selected['job']['_id']),
+        name: selected['position']
     })
-    apply['apply'].push(mongoose.Types.ObjectId(selectedID))
-    return await apply.save()
+    apply['apply'].push(mongoose.Types.ObjectId(selected['_id']))
+    return apply.save()
 }

@@ -95,6 +95,7 @@ export class JobController {
                 await updated.save()
             } else if (status === 'accept') {
                 user['selectedBy'].push(Types.ObjectId(updated._id))
+                await addUserApply(updated)
                 await user.save()
             }
             res.json(updated)
@@ -312,6 +313,7 @@ export class JobController {
                 let user = await getUserById(userId)
                 user['selectedBy'].push(a._id)
                 await user.save()
+                await addUserApply(a)
             }
             res.json(await getSelectedUser(jobId, 'applying'))
         } catch (error) {
