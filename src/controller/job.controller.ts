@@ -40,7 +40,7 @@ export class JobController {
                         }
                     }
                 })
-            return res.send(jobs.filter(v => v['owner'].uid === uid))
+            return res.json(jobs.filter(v => v['owner'].uid === uid))
         } catch (error) {
             console.log(error);
             res.status(402)
@@ -97,7 +97,7 @@ export class JobController {
                 user['selectedBy'].push(Types.ObjectId(updated._id))
                 await user.save()
             }
-            res.send(updated)
+            res.json(updated)
         } catch (error) {
             console.log(error);
             res.status(401)
@@ -149,7 +149,7 @@ export class JobController {
             w_2['waiting'] = Date.now()
             w_2['position'] = info.pos
             await w_2.save()
-            res.send('invite success')
+            res.json({ text: 'invite success' })
         } catch (error) {
             console.log(error);
             res.status(401)
@@ -179,7 +179,7 @@ export class JobController {
                         }
                     }
                 })
-            return res.send(jobs.filter(v => v['owner'].uid === uid))
+            return res.json(jobs.filter(v => v['owner'].uid === uid))
         } catch (error) {
             res.status(401)
                 .send(error)
@@ -206,7 +206,7 @@ export class JobController {
                 status: 'applying',
                 position: info.position
             }, { upsert: true })
-            res.send('success')
+            res.json('success')
         } catch (error) {
             res.status(401)
                 .send(error)
@@ -248,7 +248,7 @@ export class JobController {
             })
             target['status'] = 'finished'
             await target.save()
-            return res.send('success')
+            return res.json({ text: 'success' })
         } catch (error) {
             res.status(401)
                 .send(error)

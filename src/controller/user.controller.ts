@@ -75,7 +75,7 @@ export class UserController {
 
     static async getAllUserWithInfo(req: Request, res: Response) {
         let w = await getAllUser();
-        res.send(w)
+        res.json(w)
     }
 
     static async getUserProfile(req: Request, res: Response) {
