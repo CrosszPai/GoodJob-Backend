@@ -118,9 +118,9 @@ export const getAvailableJobForUser = async (uid: string) => {
     let alreadyJob = u_selected
         .filter(v => {
             return v['status'] === 'inviting'
-                || v['status'] === 'cancle'
+                || v['status'] === 'cancel'
                 || v['status'] === 'accept'
-                || v['status'] === 'finihed'
+                || v['status'] === 'finished'
                 || v['status'] === 'applying'
         }
         ).map(v => v['job'].toString())
