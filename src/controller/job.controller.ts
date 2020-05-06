@@ -306,7 +306,7 @@ export class JobController {
                     .send("invalid token type")
             }
             await verify(token);
-            let a = await updateSelected('5eb1ff18723bbd0021391b31', '5eb1862c969cab0021368921', status);
+            let a = await updateSelected(jobId, userId, status);
             if (status === 'accept') {
                 let user = await getUserById(userId)
                 user['selectedBy'].push(a._id)
