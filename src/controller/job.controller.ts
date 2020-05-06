@@ -204,7 +204,15 @@ export class JobController {
         try {
             let uid = await verify(token);
             let user = await getUserById(uid)
-            await addSelected(jobID, user._id, 'applying', info.position)
+            await SelectedModel.findOneAndUpdate({
+                job: Types.ObjectId(jobID),
+                user: Types.ObjectId(user._id)
+            }, {
+                job: Types.ObjectId(jobID),
+                user: Types.ObjectId(user._id),
+                status: 'applying',
+                position: info.position
+            }, { upsert: true })
             res.send('success')
         } catch (error) {
             res.status(401)
