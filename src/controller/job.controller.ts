@@ -184,7 +184,7 @@ export class JobController {
                 let d = new Date()
                 let pass = new Date(v['finish_date'])
                 pass.setDate(pass.getDate() + 1)
-                return v['owner'].uid === uid && d.valueOf() > pass.valueOf()
+                return v['owner'].uid === uid && !(d.valueOf() > pass.valueOf())
             }))
         } catch (error) {
             res.status(401)
