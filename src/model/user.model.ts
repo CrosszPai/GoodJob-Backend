@@ -20,7 +20,9 @@ export const UserSchema = new mongoose.Schema({
     selectedBy: [{
         type: mongoose.Types.ObjectId,
         ref: 'selected'
-    }]
+    }],
+    bank: String,
+    bank_account: String
 });
 
 export const UserModel = mongoose.model('user', UserSchema);

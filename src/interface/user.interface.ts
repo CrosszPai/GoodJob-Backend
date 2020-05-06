@@ -8,7 +8,9 @@ export interface User {
     introduce_text?: string,
     phone_number?: string,
     id_card?: string,
-    email?:string,
-    age?:number,
-    photoURL?:string
+    email?: string,
+    age?: number,
+    photoURL?: string,
+    bank?: string,
+    bank_account?: string
 }
