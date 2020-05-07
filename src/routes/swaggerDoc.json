@@ -6,53 +6,583 @@
     "version": "0.0.1"
   },
   "servers": [
-      {
-          "url":"https://goodjob-api.herokuapp.com/",
-          "description":"Public API Server"
-      },
-      {
-          "url": "http://localhost:8000",
-          "description": "Local Server for backend development"
-      }
+    {
+      "url": "https://goodjob-api.herokuapp.com/",
+      "description": "Public API Server"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Server for backend development"
+    }
   ],
   "components": {
     "schemas": {
-      "Payload": {
+      "location": {
         "type": "object",
         "properties": {
-          "ID": {
-            "type": "integer"
+          "lat": {
+            "type": "number"
           },
-          "Text": {
+          "lon": {
+            "type": "number"
+          },
+          "address": {
             "type": "string"
           }
         }
+      },
+      "position": {
+        "type": "object",
+        "properties": {
+          "required": {
+            "type": "integer"
+          },
+          "wage": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "user": {
+        "type": "object",
+        "properties": {
+          "firstname": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "current_role": {
+            "type": "string"
+          },
+          "current_province": {
+            "type": "string"
+          },
+          "interested": {
+            "type": "string"
+          },
+          "introduce_text": {
+            "type": "string"
+          },
+          "id_card": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          },
+          "photoURL": {
+            "type": "string"
+          }
+        }
+      },
+      "job": {
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "start_date": {
+            "type": "number"
+          },
+          "finish_date": {
+            "type": "number"
+          },
+          "location": {
+            "$ref": "#/components/schemas/location"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/position"
+            }
+          }
+        }
+      },
+      "comment": {
+        "type": "object"
       }
     }
   },
   "paths": {
-    "/": {
+    "/job/{id}/selecting": {
+      "get": {
+        "description": "ดึง list ของ user ที่จะให้เลือก",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/job/{id}": {
+      "get": {
+        "description": "ดึงข้อมูล user จาก job",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/job/select": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "description": "status ของ user ในงาน",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "description": "ดึงข้อมูล user จาก id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "userID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/available": {
+      "get": {
+        "description": "ดึงงานที่ว่างอยู่",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/apply": {
       "post": {
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Payload"
+                "type": "object",
+                "properties": {
+                  "position": { "type": "string" }
+                }
               }
             }
+          }
+        }
+      }
+    },
+    "/job/{id}/end/{user}": {
+      "put": {
+        "description": "จบงาน user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
           },
-          "description": "Object will be tested"
-        },
+          {
+            "in": "path",
+            "name": "user",
+            "description": "userID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Get response same at request object"
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/select": {
+      "put": {
+        "description": "เลือก user แล้วส่งคำเชิญ",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job/{id}/users": {
+      "get": {
+        "description": "ดึง user ที่ถูกเลือกทั้งหมดในงาน",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "name": "mode",
+            "description": "status ที่จะ filter",
+            "schema": {
+              "type": "string",
+              "example": "inviting"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/useraccept": {
+      "put": {
+        "description": "user ตอบรับ invite",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "status ที่จะส่ง",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/owneraccept/{user}": {
+      "put": {
+        "description": "owber ตอบรับ user apply",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "required": true,
+            "name": "user",
+            "description": "userID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "status",
+            "description": "status ที่จะส่ง",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}/comment": {
+      "put": {
+        "description": "reply comment",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reply": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "post comment",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/all": {
+      "get": {
+        "description": "ดึงข้อมูล user ทั้งหมด",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/job/{id}": {
+      "get": {
+        "description": "ดึงข้อมูล job ตาม id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "แก้ไข job ตาม id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "jobID",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/job"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job": {
+      "post": {
+        "description": "สร้าง job",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/job"
+              }
+            }
           }
         }
       },
       "get": {
-        "description": "Testing swagger",
+        "description": "เลือก job ของ owner จาก mode",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "mode",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user": {
+      "put": {
+        "description": "Update ข้อมูล user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "description": "ดึงข้อมูล user จาก token ที่ส่งมา",
         "parameters": [],
         "responses": {
           "200": {
